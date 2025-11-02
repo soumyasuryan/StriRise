@@ -11,7 +11,7 @@ export default function NavBar() {
       <div className="max-w-auto mx-10 px-6 py-5 flex justify-between items-center">
         {/* Logo / Brand Name */}
         <Link href="/" className="text-2xl font-bold text-pink-700">
-          <img src="/trace.svg" className="h-20 rounded-[50%]" alt="" />
+          <img src="/trace.svg" className="h-10 rounded-[50%]" alt="" />
         </Link>
 
         {/* Desktop Menu */}
