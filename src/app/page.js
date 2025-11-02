@@ -9,7 +9,7 @@ export default function HomePage() {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const res = await fetch("http://127.0.0.1:5000/api/all-skills");
+        const res = await fetch("https://stririsebackend.onrender.com/api/all-skills");
         const data = await res.json();
         setSkills(Object.entries(data));
       } catch (error) {

@@ -12,7 +12,7 @@ export default function Marketplace() {
     const fetchItems = async () => {
       try {
         setLoading(true);
-        const res = await fetch("http://127.0.0.1:5000/items");
+        const res = await fetch("https://stririsebackend.onrender.com/items");
         const data = await res.json();
 
         // ✅ Extract based on selected tab
