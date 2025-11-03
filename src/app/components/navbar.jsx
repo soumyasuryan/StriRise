@@ -2,16 +2,28 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const status = localStorage.getItem("userLoggedIn");
     setLoggedIn(status === "true");
+  }, []);
+
+  useEffect(() => {
+    // Close dropdown when clicking outside
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleLogout = () => {
@@ -29,7 +41,7 @@ export default function NavBar() {
         </Link>
 
         {/* Desktop Menu */}
-        <div className="hidden md:flex space-x-8 text-pink-800 font-medium items-center">
+        <div className="hidden md:flex space-x-8 text-pink-800 font-medium items-center relative">
           <Link href="/" className="hover:text-pink-600 transition">Home</Link>
           <Link href="/business_suggestion" className="hover:text-pink-600 transition">Skill Recommendation</Link>
           <Link href="/ai_roadmap" className="hover:text-pink-600 transition">AI Roadmap</Link>
@@ -43,25 +55,17 @@ export default function NavBar() {
               <Link href="/signup" className="p-3 bg-pink-600 text-white rounded-md">Signup</Link>
             </div>
           ) : (
-            <div
-              className="relative"
-              onMouseEnter={() => setShowDropdown(true)}
-              onMouseLeave={() => setShowDropdown(false)}
-            >
+            <div className="relative" ref={dropdownRef}>
               <Image
                 src="/profile.png"
-                alt="Profile"
+                alt="User Avatar"
                 width={42}
                 height={42}
                 className="rounded-full border-2 border-pink-500 cursor-pointer hover:scale-105 transition-transform"
+                onClick={() => setShowDropdown(!showDropdown)}
               />
               {showDropdown && (
-                <div
-                  className={`
-                    absolute right-0 mt-3 w-36 bg-white rounded-lg shadow-lg border border-pink-100
-                    opacity-100 visible transition-all duration-200 ease-in-out
-                  `}
-                >
+                <div className="absolute right-0 mt-3 w-36 bg-white rounded-lg shadow-lg border border-pink-100 animate-fadeIn">
                   <button
                     onClick={handleLogout}
                     className="block w-full text-left px-4 py-2 text-pink-600 hover:bg-pink-50 rounded-lg"
