@@ -1,6 +1,6 @@
 export async function apiFetch(url, options = {}) {
   const token = localStorage.getItem("token");
-  const res = await fetch(`http://127.0.0.1:5000${url}`, {
+  const res = await fetch(`https://stririsebackend.onrender.com${url}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
