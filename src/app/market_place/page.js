@@ -58,7 +58,7 @@ function Marketplace() {
         </section>
 
         {/* Tab Switcher */}
-        <div className="flex sm:flex-row flex-col justify-center mt-10 gap-4">
+        <div className="flex sm:flex-row flex-col justify-center mt-10 gap-4 mx-20">
   {["courses", "rentable", "purchasable"].map((tab) => {
     const tabLabels = {
       courses: "Courses",
