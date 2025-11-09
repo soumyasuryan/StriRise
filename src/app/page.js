@@ -1,131 +1,137 @@
 "use client";
-import { useEffect, useState } from "react";
+
+import Link from "next/link";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import NavBar from "./components/navbar2";
 import Footer from "./components/footer";
 
-export default function HomePage() {
-  const [skills, setSkills] = useState([]);
+export default function LandingPage() {
+  const router = useRouter();
 
   useEffect(() => {
-    const fetchSkills = async () => {
-      try {
-        const res = await fetch("https://stririsebackend.onrender.com/api/all-skills");
-        const data = await res.json();
-        setSkills(Object.entries(data));
-      } catch (error) {
-        console.error("Error fetching skills:", error);
-      }
-    };
-    fetchSkills();
-  }, []);
+    const token = localStorage.getItem("token");
+    if (token) router.push("/home");
+  }, [router]);
+
+  const features = [
+  {
+    title: "AI Roadmap",
+    desc: "Plan your AI journey with a clear, step-by-step roadmap that guides you through essential milestones, from learning foundational skills to mastering advanced AI techniques. Track your progress, set goals, and stay motivated throughout your journey.",
+    img: "/ai_chatbot.jpg",
+  },
+  {
+    title: "Business Recommender",
+    desc: "Discover tailored business strategies and skill recommendations powered by AI insights. Our system analyzes your interests, market trends, and growth potential to suggest personalized actions that help you make smarter decisions and scale your business efficiently.",
+    img: "/business_rec.jpg",
+  },
+  {
+    title: "Marketplace",
+    desc: "Connect with like-minded entrepreneurs, buy or sell products, and expand your business network. Explore opportunities, promote your services, and find partners or clients, all within a secure and intuitive platform designed for modern business growth.",
+    img: "/marketplace.jpg",
+  },
+  {
+    title: "Explore Courses",
+    desc: "Browse a curated list of courses to enhance your knowledge and sharpen your skills. Whether you're learning new business strategies, AI techniques, or personal development topics, find high-quality resources to accelerate your growth and achieve your goals.",
+    img: "/courses.avif",
+  },
+  {
+    title: "Explore Skills",
+    desc: "Identify and develop skills that are directly relevant to your business objectives and personal growth. Get recommendations for practical exercises, learning resources, and real-world projects to build expertise and stay competitive in your industry.",
+    img: "/skills.avif",
+  }
+];
+
 
   return (
-    <div className="min-h-screen bg-pink-100 flex flex-col items-center">
-      {/* ✅ Hero Section */}
-      <section className="relative w-full">
-        {/* ✅ Navbar is absolutely positioned over the image */}
-        <div className="absolute top-0 left-0 w-full z-20">
-          <NavBar />
-        </div>
+    <div className="flex flex-col min-h-screen bg-pink-50 text-white">
+      {/* Navbar on top */}
+      <div className="absolute w-full z-50">
+        <NavBar />
+      </div>
 
-        {/* Full-width Hero Image */}
-        <img
-          src="/hero-women.png"
-          alt="Women Empowerment"
-          className="w-full h-[90vh] object-cover"
-        />
-
-        {/* Dark overlay */}
+      {/* Hero Section */}
+      <main
+        className="relative flex flex-col items-center justify-center h-screen text-center py-28 px-6 sm:px-12 lg:px-24 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: "url('/hero-women3.webp')", // Replace with your image
+        }}
+      >
+        {/* Overlay for reduced opacity */}
         <div className="absolute inset-0 bg-black/70"></div>
 
-        {/* Text + Button Overlay */}
-        <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-10">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-white drop-shadow-lg max-w-3xl">
-            “Empowering Women to Rise, Create, and Lead with Confidence.”
+        {/* Hero Content */}
+        <div className="relative z-10 max-w-3xl">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold mb-6 leading-tight">
+            Empower Women Entrepreneurs with AI
           </h1>
-          <p className="text-lg md:text-xl text-pink-100 mt-4 max-w-2xl drop-shadow-sm">
-            Join StriRise — your platform to turn passion into purpose and ideas into impact.
-          </p>
-          <a href="/business_suggestion" className="mt-8 bg-pink-600 text-white px-8 py-3 rounded-full hover:bg-pink-700 transition duration-300 shadow-lg text-lg font-semibold">
-            Get Started
-          </a>
-        </div>
-      </section>
-
-      {/* Skills Section */}
-      {/* (unchanged below) */}
-      <section className="w-full px-6 py-16">
-        <h2 className="text-3xl font-bold text-pink-700 text-center mb-10">
-          Explore Skill-Based Opportunities
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
-          {skills.length === 0 ? (
-            <p className="text-gray-600 text-center w-full col-span-full">
-              Loading skills...
-            </p>
-          ) : (
-            skills.slice(0, 9).map(([name, info], index) => (
-              <div
-                key={index}
-                className="cursor-pointer relative group bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-2xl transition-transform transform hover:-translate-y-2"
-              >
-                <img
-                  src={info.image}
-                  alt={name}
-                  className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-90"
-                />
-                <div className="absolute inset-0 bg-pink-800 bg-opacity-80 text-white flex flex-col justify-center items-center px-4 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <h3 className="text-lg font-semibold mb-2">{name}</h3>
-                  <p className="text-sm line-clamp-5">{info.summary}</p>
-                </div>
-                <div className="p-4 text-center">
-                  <h3 className="text-lg font-bold text-pink-700">{name}</h3>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-      </section>
-
-      {/* About Section + Footer (same as before) */}
-      <section className="bg-white py-20 px-6 text-center">
-        <div className="max-w-auto mx-auto">
-          <h2 className="text-4xl font-bold text-pink-700 mb-6">About StriRise</h2>
-          <p className="text-gray-700 text-lg leading-relaxed mb-8">
-            StriRise is a digital platform dedicated to{" "}
-            <span className="font-semibold text-pink-600">empowering women</span> by helping them discover skills,
-            access learning opportunities, and connect with meaningful work.
-            We believe that when women rise, entire communities rise with them —
-            fostering innovation, equality, and progress.
+          <p className="text-lg sm:text-xl mb-10">
+            Get personalized skill recommendations, business insights, and AI-powered guidance—all in one place to help you grow and succeed.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10">
-            <div className="p-6 bg-pink-50 rounded-2xl shadow hover:shadow-lg transition">
-              <h3 className="text-xl font-semibold text-pink-700 mb-2">🎯 Our Mission</h3>
-              <p className="text-gray-700">
-                To bridge the gap between skills and opportunities, enabling every woman to become financially independent and confident.
-              </p>
-            </div>
-
-            <div className="p-6 bg-pink-50 rounded-2xl shadow hover:shadow-lg transition">
-              <h3 className="text-xl font-semibold text-pink-700 mb-2">💡 Our Vision</h3>
-              <p className="text-gray-700">
-                A world where every woman has equal access to resources, mentorship, and opportunities to lead and create change.
-              </p>
-            </div>
-
-            <div className="p-6 bg-pink-50 rounded-2xl shadow hover:shadow-lg transition">
-              <h3 className="text-xl font-semibold text-pink-700 mb-2">🤝 Our Promise</h3>
-              <p className="text-gray-700">
-                To continuously uplift, educate, and support women in pursuing their dreams through technology and community.
-              </p>
-            </div>
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center">
+            <Link href="/signup">
+              <button className="px-8 py-3 bg-pink-600 hover:bg-pink-700 rounded-lg text-lg font-semibold shadow-lg transition-transform hover:scale-105">
+                Get Started
+              </button>
+            </Link>
+            <Link href="/login">
+              <button className="px-8 py-3 border-2 border-pink-300 text-white rounded-lg text-lg font-semibold hover:bg-pink-500 transition">
+                Log In
+              </button>
+            </Link>
           </div>
         </div>
-      </section>
+      </main>
+
+      {/* Features Section */}
+      <section className="py-24 max-w-6xl mx-auto px-6 flex flex-col gap-12">
+  {features.map((item, index) => (
+    <div
+      key={index}
+      className={`flex flex-col md:flex-row items-center rounded-3xl p-6 md:p-10 shadow-lg hover:shadow-2xl transition-all duration-300 bg-gradient-to-r ${
+        index % 2 === 0 ? "from-pink-100 to-pink-200" : "from-pink-200 to-pink-300"
+      }`}
+    >
+      <img
+  src={item.img}
+  alt={item.title}
+  className="w-40 h-40 md:w-48 md:h-48 object-cover rounded-2xl flex-shrink-0 mb-4 md:mb-0 md:mr-8"
+/>
+
+      <div className="flex-1 text-center md:text-left">
+        <h3 className="text-2xl md:text-3xl font-bold text-pink-700 mb-2">
+          {item.title}
+        </h3>
+        <p className="text-pink-900 text-lg">{item.desc}</p>
+      </div>
+    </div>
+  ))}
+</section>
+
 
       <Footer />
     </div>
   );
 }
 
+function FeatureCard({ title, desc, img, isLeftAligned }) {
+  return (
+    <div
+      className={`flex flex-col md:flex-row items-center bg-pink-100 rounded-2xl shadow-lg hover:shadow-2xl transition p-6 md:p-8 gap-6 md:gap-8 ${
+        isLeftAligned ? "md:flex-row" : "md:flex-row-reverse"
+      }`}
+      style={{ minHeight: "300px" }}
+    >
+      <img
+        src={img}
+        alt={title}
+        className="w-32 h-32 md:w-40 md:h-40 object-contain rounded-lg"
+      />
+      <div className={`text-center md:text-left max-w-md text-pink-900`}>
+        <h3 className="text-2xl md:text-3xl font-bold mb-2">{title}</h3>
+        <p className="text-lg">{desc}</p>
+      </div>
+    </div>
+  );
+}

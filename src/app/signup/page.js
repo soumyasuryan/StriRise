@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { Lock, Mail, User } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Navbar from "../components/navbar";
+import Navbar from "../components/navbar3";
 import Footer from "../components/footer";
 
 export default function SignupPage() {
@@ -14,7 +14,9 @@ export default function SignupPage() {
     password: "",
     confirmPassword: "",
   });
+
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -22,13 +24,16 @@ export default function SignupPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage({ type: "", text: "" });
+
     if (form.password !== form.confirmPassword) {
-      alert("❌ Passwords do not match!");
+      setMessage({ type: "error", text: "❌ Passwords do not match!" });
       return;
     }
 
     setLoading(true);
     try {
+      // 1️⃣ Create account
       const res = await fetch("https://stririsebackend.onrender.com/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -42,35 +47,71 @@ export default function SignupPage() {
       const data = await res.json();
       console.log("Signup response:", data);
 
-      if (res.ok) {
-        alert("✅ Account created successfully!");
+      if (!res.ok) {
+        setMessage({
+          type: "error",
+          text: `⚠️ ${data.error || "Signup failed. Try again!"}`,
+        });
+        setLoading(false);
+        return;
+      }
 
-        // ✅ Save login state and redirect only if success
-        localStorage.setItem("userLoggedIn", "true");
-        window.location.href = "/"; // redirect to homepage
+      // 2️⃣ If signup success, automatically log in
+      setMessage({ type: "success", text: "✅ Account created! Logging in..." });
+
+      const loginRes = await fetch("https://stririsebackend.onrender.com/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+        }),
+      });
+
+      const loginData = await loginRes.json();
+      console.log("Login after signup:", loginData);
+
+      if (res.ok) {
+  localStorage.setItem("token", data.token); // ✅ Save token for RequireAuth
+  setMessage({ type: "success", text: "✅ Account created successfully!" });
+
+  setTimeout(() => {
+    router.push("/home");
+  }, 1500);
       } else {
-        alert(`⚠️ ${data.error || "Signup failed. Try again!"}`);
+        setMessage({
+          type: "error",
+          text: "Signup done, but login failed. Please log in manually.",
+        });
       }
     } catch (error) {
       console.error("Signup error:", error);
-      alert("Something went wrong. Please try again later.");
+      setMessage({
+        type: "error",
+        text: "Something went wrong. Please try again later.",
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ JSX must be returned INSIDE the component
   return (
     <div className="flex items-center flex-col min-h-screen bg-gradient-to-br from-pink-200 via-pink-100 to-pink-300">
       <Navbar />
-      <div className="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-lg w-full max-w-md border border-pink-100 hover:shadow-pink-300 transition-all duration-300 my-20">
-        <h2 className="text-3xl font-bold text-center text-pink-700 mb-2">Join StriRise</h2>
-        <p className="text-center text-gray-500 mb-6">Create your account to get started ✨</p>
+      <div className="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-lg w-full max-w-md md:max-w-[35%] border border-pink-100 hover:shadow-pink-300 transition-all duration-300 mb-20 mt-5">
+        <h2 className="text-3xl font-bold text-center text-pink-700 mb-2">
+          Join StriRise
+        </h2>
+        <p className="text-center text-gray-500 mb-6">
+          Create your account to get started ✨
+        </p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Name */}
+          {/* Full Name */}
           <div>
-            <label className="block text-pink-700 font-medium mb-1">Full Name</label>
+            <label className="block text-pink-700 font-medium mb-1">
+              Full Name
+            </label>
             <div className="relative">
               <User className="absolute left-3 top-3 text-pink-500 w-5 h-5" />
               <input
@@ -87,7 +128,9 @@ export default function SignupPage() {
 
           {/* Email */}
           <div>
-            <label className="block text-pink-700 font-medium mb-1">Email</label>
+            <label className="block text-pink-700 font-medium mb-1">
+              Email
+            </label>
             <div className="relative">
               <Mail className="absolute left-3 top-3 text-pink-500 w-5 h-5" />
               <input
@@ -104,7 +147,9 @@ export default function SignupPage() {
 
           {/* Password */}
           <div>
-            <label className="block text-pink-700 font-medium mb-1">Password</label>
+            <label className="block text-pink-700 font-medium mb-1">
+              Password
+            </label>
             <div className="relative">
               <Lock className="absolute left-3 top-3 text-pink-500 w-5 h-5" />
               <input
@@ -121,7 +166,9 @@ export default function SignupPage() {
 
           {/* Confirm Password */}
           <div>
-            <label className="block text-pink-700 font-medium mb-1">Confirm Password</label>
+            <label className="block text-pink-700 font-medium mb-1">
+              Confirm Password
+            </label>
             <div className="relative">
               <Lock className="absolute left-3 top-3 text-pink-500 w-5 h-5" />
               <input
@@ -136,6 +183,18 @@ export default function SignupPage() {
             </div>
           </div>
 
+          {/* Message */}
+          {message.text && (
+            <p
+              className={`text-center font-medium ${
+                message.type === "success" ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {message.text}
+            </p>
+          )}
+
+          {/* Button */}
           <button
             type="submit"
             disabled={loading}
@@ -150,7 +209,10 @@ export default function SignupPage() {
         <div className="text-center mt-5">
           <p className="text-sm text-gray-600">
             Already have an account?{" "}
-            <Link href="/login" className="text-pink-600 font-semibold hover:underline">
+            <Link
+              href="/login"
+              className="text-pink-600 font-semibold hover:underline"
+            >
               Log in
             </Link>
           </p>

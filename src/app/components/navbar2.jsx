@@ -6,32 +6,33 @@ import Image from "next/image";
 
 export default function NavBar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setLoggedIn] = useState(false);
 
   // ✅ Check login status from localStorage when page loads
   useEffect(() => {
-    const loggedIn = localStorage.getItem("userLoggedIn");
-    if (loggedIn === "true") setIsLoggedIn(true);
-  }, []);
+  const token = localStorage.getItem("token");
+  setLoggedIn(!!token); // true if token exists
+}, []);
+
 
   // ✅ Logout functionality
   const handleLogout = () => {
-    localStorage.removeItem("userLoggedIn");
-    setIsLoggedIn(false);
-    window.location.href = "/";
-  };
+  localStorage.removeItem("token");
+  localStorage.removeItem("userLoggedIn");
+  window.location.href = "/login";
+};
 
   return (
     <nav className="w-full bg-transparent shadow-none">
       <div className="max-w-auto mx-10 px-6 py-5 flex justify-between items-center">
         {/* Logo / Brand Name */}
-        <Link href="/" className="text-2xl font-bold text-pink-700">
+        <Link href="/" className="text-2xl font-bold text-pink-700 select-none caret-transparent">
           <img src="/trace.svg" className="h-15 rounded-[50%]" alt="logo" />
         </Link>
 
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-8 text-white font-large items-center">
-          <Link href="/" className="hover:text-pink-200 transition">Home</Link>
+          <Link href="/home" className="hover:text-pink-200 transition">Home</Link>
           <Link href="/business_suggestion" className="hover:text-pink-200 transition">Skill Recommendation</Link>
           <Link href="/ai_roadmap" className="hover:text-pink-200 transition">AI Roadmap</Link>
           <Link href="/market_place" className="hover:text-pink-200 transition">Marketplace</Link>
@@ -71,7 +72,7 @@ export default function NavBar() {
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden text-pink-700 focus:outline-none"
+          className="lg:hidden text-pink-700 focus:outline-none"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? (
@@ -92,8 +93,8 @@ export default function NavBar() {
 
       {/* Mobile Menu Dropdown */}
       {isOpen && (
-        <div className="md:hidden bg-pink-50/80 backdrop-blur-sm px-6 pb-4 space-y-3 text-pink-800 font-medium rounded-lg shadow">
-          <Link href="/" className="block hover:text-pink-200">Home</Link>
+        <div className="lg:hidden bg-pink-50/80 backdrop-blur-sm px-6 pb-4 space-y-3 text-pink-800 font-medium rounded-lg shadow">
+          <Link href="/home" className="block hover:text-pink-200">Home</Link>
           <Link href="/business_suggestion" className="block hover:text-pink-200">Skill Recommendation</Link>
           <Link href="/ai_roadmap" className="block hover:text-pink-200">AI Roadmap</Link>
           <Link href="/marketplace" className="block hover:text-pink-200">Marketplace</Link>

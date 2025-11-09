@@ -3,51 +3,57 @@ import Link from "next/link";
 import { useState } from "react";
 import { Lock, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Navbar from "../components/navbar";
+import Navbar from "../components/navbar3";
 import Footer from "../components/footer";
 
 export default function LoginPage() {
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" }); // ✅ feedback message state
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
+    e.preventDefault();
+    setMessage({ type: "", text: "" });
+    setLoading(true);
 
-  try {
-    const res = await fetch("https://stririsebackend.onrender.com/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    });
+    try {
+      const res = await fetch("https://stririsebackend.onrender.com/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+        credentials: "include", // ✅ enables session cookie
+      });
 
-    const data = await res.json();
-    console.log("Login response:", data);
+      const data = await res.json();
+      console.log("Login response:", data);
 
-    if (res.ok) {
-      alert("✅ Login successful!");
 
-      // ✅ Save login state only if successful
-      localStorage.setItem("userLoggedIn", "true");
 
-      // ✅ Redirect to homepage
-      window.location.href = "/";
-    } else {
-      alert(`⚠️ ${data.error || "Invalid credentials, please try again!"}`);
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("userLoggedIn", "true");
+        setMessage({ type: "success", text: "✅ Login successful!" });
+        setTimeout(() => router.push("/"), 1500);
+      }
+      else {
+        setMessage({
+          type: "error",
+          text: `⚠️ ${data.error || "Invalid credentials, please try again!"}`,
+        });
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      setMessage({ type: "error", text: "Something went wrong. Please try again later." });
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    console.error("Login error:", error);
-    alert("Something went wrong. Please try again later.");
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
+  
 
   return (
     <div className="flex items-center flex-col min-h-screen bg-gradient-to-br from-pink-200 via-pink-100 to-pink-300">
@@ -57,6 +63,7 @@ export default function LoginPage() {
         <p className="text-center text-gray-500 mb-6">Log in to continue your journey ✨</p>
 
         <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Email */}
           <div>
             <label className="block text-pink-700 font-medium mb-1">Email Address</label>
             <div className="relative">
@@ -73,6 +80,7 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {/* Password */}
           <div>
             <label className="block text-pink-700 font-medium mb-1">Password</label>
             <div className="relative">
@@ -89,12 +97,22 @@ export default function LoginPage() {
             </div>
           </div>
 
+          {/* ✅ Inline message display */}
+          {message.text && (
+            <p
+              className={`text-center font-medium ${message.type === "success" ? "text-green-600" : "text-red-600"
+                }`}
+            >
+              {message.text}
+            </p>
+          )}
+
+          {/* Submit Button */}
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 mt-2 ${
-              loading ? "bg-pink-400" : "bg-pink-600 hover:bg-pink-700"
-            } text-white rounded-xl font-semibold shadow-md hover:shadow-pink-300 transition-all duration-300`}
+            className={`w-full py-3 mt-2 ${loading ? "bg-pink-400" : "bg-pink-600 hover:bg-pink-700"
+              } text-white rounded-xl font-semibold shadow-md hover:shadow-pink-300 transition-all duration-300`}
           >
             {loading ? "Logging in..." : "Login"}
           </button>
@@ -104,7 +122,7 @@ export default function LoginPage() {
           <p className="text-sm text-gray-600">
             Don’t have an account?{" "}
             <Link href="/signup" className="text-pink-600 font-semibold hover:underline">
-              Sign up 
+              Sign up
             </Link>
           </p>
         </div>

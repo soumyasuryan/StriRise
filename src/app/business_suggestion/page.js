@@ -2,8 +2,11 @@
 import { useState, useEffect } from "react";
 import NavBar from "../components/navbar";
 import Footer from "../components/footer";
+import { apiFetch } from "../utils/api";
+import RequireAuth from "../utils/RequireAuth";
+import withAuth from "../utils/withAuth";
 
-export default function BusinessRecommendation() {
+function BusinessRecommendation() {
   const [formData, setFormData] = useState({
     Age: "",
     Gender: "",
@@ -59,7 +62,7 @@ export default function BusinessRecommendation() {
     setPrediction(null);
 
     try {
-      const res = await fetch("https://stririsebackend.onrender.com/predict", {
+       const res = await apiFetch("/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData)
@@ -76,11 +79,12 @@ export default function BusinessRecommendation() {
   };
 
   return (
+    <RequireAuth>
     <div className="min-h-screen bg-pink-100 flex flex-col">
       <NavBar />
       <main className="flex-grow container mx-auto px-4 py-10">
         <h1 className="text-3xl font-bold text-center mb-6 text-pink-800">
-          🌸 Business Idea Recommender
+           Business Idea Recommender
         </h1>
 
         <form
@@ -250,5 +254,7 @@ export default function BusinessRecommendation() {
 
       <Footer />
     </div>
+    </RequireAuth>
   );
 }
+export default withAuth(BusinessRecommendation)

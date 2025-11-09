@@ -45,7 +45,7 @@ export default function NavBar() {
         <div className="hidden lg:flex space-x-8 text-pink-800 font-medium items-center relative">
           <Link href="/home" className="hover:text-pink-600 transition">Home</Link>
           <Link href="/business_suggestion" className="hover:text-pink-600 transition">Skill Recommendation</Link>
-          <Link href="/ai_roadmap" className="hover:text-pink-600 transition">AI Roadmap</Link>
+          <Link href="/login" className="hover:text-pink-600 transition">AI Roadmap</Link>
           <Link href="/market_place" className="hover:text-pink-600 transition">Marketplace</Link>
           <Link href="/contact" className="hover:text-pink-600 transition">Contact</Link>
 
@@ -105,7 +105,7 @@ export default function NavBar() {
         <div className="lg:hidden bg-pink-100 px-6 pb-4 space-y-3 text-pink-800 font-medium flex flex-col items-center justify-center">
           <Link href="/home" className="block hover:text-pink-600">Home</Link>
           <Link href="/business_suggestion" className="block hover:text-pink-600">Skill Recommendation</Link>
-          <Link href="/ai_roadmap" className="block hover:text-pink-600">AI Roadmap</Link>
+          <Link href="/login" className="block hover:text-pink-600">AI Roadmap</Link>
           <Link href="/market_place" className="block hover:text-pink-600">Marketplace</Link>
           <Link href="/contact" className="block hover:text-pink-600">Contact</Link>
 

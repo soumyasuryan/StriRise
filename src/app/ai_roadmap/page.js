@@ -25,6 +25,7 @@ function EmbeddedChatBot() {
   }, []);
 
   return (
+
     <div className="bg-pink-100 min-h-screen flex flex-col">
       <NavBar />
 
@@ -55,6 +56,7 @@ function EmbeddedChatBot() {
 
       <Footer />
     </div>
+
   );
 }
 
