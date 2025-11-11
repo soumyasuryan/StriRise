@@ -9,7 +9,7 @@ export default function CartPage() {
   const total = cart.reduce((sum, i) => sum + Number(i.price), 0);
 
   return (
-    <div className="min-h-screen flex flex-col bg-pink-300/60">
+    <div className="min-h-screen flex flex-col bg-transparent">
       <NavBar />
       <div className="max-w-5xl mx-auto px-6 py-12">
         <h1 className="text-4xl font-bold text-pink-700 mb-6">Your Cart</h1>

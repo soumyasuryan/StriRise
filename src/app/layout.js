@@ -27,7 +27,7 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <CartProvider>
           {/* ✅ Animated pink blob background */}
-          {/* <BlobBackground /> */}
+          <BlobBackground />
           <FeatherFall></FeatherFall>
 
           {/* ✅ Main app content */}

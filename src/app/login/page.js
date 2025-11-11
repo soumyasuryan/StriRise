@@ -56,7 +56,7 @@ export default function LoginPage() {
   
 
   return (
-    <div className="flex items-center flex-col min-h-screen bg-pink-300/60">
+    <div className="flex items-center flex-col min-h-screen bg-transparent">
       <Navbar />
       <div className="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-lg w-full max-w-md border border-pink-100 hover:shadow-pink-300 transition-all duration-300 my-20">
         <h2 className="text-3xl font-bold text-center text-pink-700 mb-2">Welcome Back</h2>
