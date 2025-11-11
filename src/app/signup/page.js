@@ -96,7 +96,7 @@ export default function SignupPage() {
   };
 
   return (
-    <div className="flex items-center flex-col min-h-screen bg-transparent">
+    <div className="flex items-center flex-col min-h-screen bg-pink-50/30">
       <Navbar />
       <div className="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-lg w-full max-w-md md:max-w-[35%] border border-pink-100 hover:shadow-pink-300 transition-all duration-300 mb-20 mt-5">
         <h2 className="text-3xl font-bold text-center text-pink-700 mb-2">

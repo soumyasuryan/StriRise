@@ -25,7 +25,7 @@ function HomePage() {
 
   return (
     <RequireAuth>
-    <div className="min-h-screen bg-pink-100 flex flex-col items-center">
+    <div className="min-h-screen bg-pink-50/30 flex flex-col items-center">
       {/* ✅ Hero Section */}
       <section className="relative w-full">
         {/* ✅ Navbar is absolutely positioned over the image */}

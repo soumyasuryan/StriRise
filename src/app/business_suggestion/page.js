@@ -76,7 +76,7 @@ function BusinessRecommendation() {
 
   return (
     <RequireAuth>
-      <div className="min-h-screen bg-transparent flex flex-col">
+      <div className="min-h-screen bg-pink-50/30 flex flex-col">
         <NavBar />
         <main className="flex-grow container mx-auto px-4 py-10">
           <motion.h1
