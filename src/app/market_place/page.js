@@ -46,7 +46,7 @@ function Marketplace() {
 
   return (
     <RequireAuth>
-      <div className="min-h-screen flex flex-col bg-pink-50/30">
+      <div className="min-h-screen flex flex-col bg-pink-300/60">
         <NavBar />
 
         {/* Hero Section */}

@@ -26,7 +26,7 @@ function EmbeddedChatBot() {
 
   return (
 
-    <div className="bg-pink-50/30 min-h-screen flex flex-col">
+    <div className="bg-pink-300/60 min-h-screen flex flex-col">
       <NavBar />
 
       <main className="flex-grow">
