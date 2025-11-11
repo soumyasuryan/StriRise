@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { CartProvider } from "../utils/CartContext"; // ✅ adjust path if needed
+import { CartProvider } from "./utils/CartContext"; // ✅ adjust path if needed
 import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
