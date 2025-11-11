@@ -113,57 +113,72 @@ function Marketplace() {
 }
 
 // Separate Card component to handle per-item image lazy loading
+import { useCart } from "../utils/CartContext"; // Add this line
+// import toast from "react-hot-toast";
 function Card({ item, activeTab }) {
+  // toast.success(`${newItem.name} added to cart!`);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const { addToCart } = useCart();
 
   useEffect(() => {
-    // Delay image load by 300ms to let card content render first
     const timer = setTimeout(() => setImageLoaded(true), 300);
     return () => clearTimeout(timer);
   }, []);
 
-  if (activeTab === "courses") {
-    return (
-      <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition transform hover:-translate-y-2 overflow-hidden p-6">
-        <h3 className="text-xl font-bold text-pink-700 mb-2">{item.name}</h3>
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-          {item.description}
-        </p>
-        <p className="text-lg font-semibold text-pink-600 mb-4">
-          ₹{item.price_in_rupees}
-        </p>
-        <button className="w-full bg-pink-600 text-white py-2 rounded-full font-semibold hover:bg-pink-700 transition">
-          Enroll Now
-        </button>
-      </div>
-    );
-  }
+  const handleAddToCart = () => {
+    const newItem = {
+      id: item.id || item._id || Math.random().toString(36).substr(2, 9),
+      name: item.name || item.product_name,
+      price:
+        activeTab === "courses"
+          ? item.price_in_rupees
+          : activeTab === "rentable"
+          ? item.rent
+          : item.price,
+      image: item.image_url || null,
+      type: activeTab,
+    };
+    addToCart(newItem);
+    alert(`${newItem.name} added to cart!`);
+  };
 
-  // For rentable or purchasable items
   return (
     <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition transform hover:-translate-y-2 overflow-hidden p-6">
       {imageLoaded ? (
         <img
           src={item.image_url}
-          alt={item.product_name}
+          alt={item.product_name || item.name}
           className="w-full h-56 object-cover mb-4"
           loading="lazy"
         />
       ) : (
         <div className="w-full h-56 bg-gray-200 mb-4 animate-pulse" />
       )}
+
       <h3 className="text-xl font-bold text-pink-700 mb-2">
-        {item.product_name}
+        {item.product_name || item.name}
       </h3>
+
       <p className="text-gray-600 text-sm mb-4 line-clamp-3">{item.description}</p>
+
       <p className="text-lg font-semibold text-pink-600 mb-4">
-        ₹{activeTab === "rentable" ? item.rent : item.price}
+        ₹
+        {activeTab === "courses"
+          ? item.price_in_rupees
+          : activeTab === "rentable"
+          ? item.rent
+          : item.price}
       </p>
-      <button className="w-full bg-pink-600 text-white py-2 rounded-full font-semibold hover:bg-pink-700 transition">
-        {activeTab === "rentable" ? "Rent Now" : "Buy Now"}
+
+      <button
+        onClick={handleAddToCart}
+        className="w-full bg-pink-600 text-white py-2 rounded-full font-semibold hover:bg-pink-700 transition"
+      >
+        Add to Cart
       </button>
     </div>
   );
 }
+
 
 export default withAuth(Marketplace);
