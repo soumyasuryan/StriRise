@@ -1,46 +1,49 @@
 "use client";
-import { createContext, useContext, useState, useEffect } from "react";
+
+import { createContext, useContext, useEffect, useState } from "react";
+import { jwtDecode } from "jwt-decode";
 
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
   const [cart, setCart] = useState([]);
+  const [userId, setUserId] = useState(null);
 
-  // Load from localStorage
+  // 🔹 Load user info from token
   useEffect(() => {
-    const saved = localStorage.getItem("cart");
-    if (saved) setCart(JSON.parse(saved));
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    try {
+      const decoded = jwtDecode(token);
+      const uid = decoded.id || decoded.email || decoded.sub; // depends on backend JWT structure
+      setUserId(uid);
+
+      // 🔹 Load that user’s specific cart
+      const savedCart = JSON.parse(localStorage.getItem(`cart_${uid}`)) || [];
+      setCart(savedCart);
+    } catch (error) {
+      console.error("Invalid or expired token", error);
+    }
   }, []);
 
-  // Save to localStorage
+  // 🔹 Save whenever cart changes
   useEffect(() => {
-    localStorage.setItem("cart", JSON.stringify(cart));
-  }, [cart]);
+    if (userId) {
+      localStorage.setItem(`cart_${userId}`, JSON.stringify(cart));
+    }
+  }, [cart, userId]);
 
-  // Add item
-  const addToCart = (item) => {
-    setCart((prev) => {
-      const exists = prev.find((p) => p.id === item.id);
-      if (exists) return prev; // avoid duplicates
-      return [...prev, item];
-    });
-  };
-
-  // Remove item
-  const removeFromCart = (id) => {
-    setCart((prev) => prev.filter((i) => i.id !== id));
-  };
-
-  // Clear cart
+  // 🔹 Functions to manage cart
+  const addToCart = (item) => setCart((prev) => [...prev, item]);
+  const removeFromCart = (id) => setCart((prev) => prev.filter((i) => i.id !== id));
   const clearCart = () => setCart([]);
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart }}>
+    <CartContext.Provider value={{ cart, addToCart, removeFromCart, clearCart, userId }}>
       {children}
     </CartContext.Provider>
   );
 }
 
-export function useCart() {
-  return useContext(CartContext);
-}
+export const useCart = () => useContext(CartContext);

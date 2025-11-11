@@ -2,14 +2,17 @@
 
 import { useRouter } from "next/navigation";
 import { useCart } from "../utils/CartContext";
-import { ShoppingCart } from "lucide-react"; // optional icon
+import { ShoppingCart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function FloatingCartButton() {
-  const { cart } = useCart(); // ✅ matches your context
+  const { cart } = useCart();
   const router = useRouter();
 
-  if (!cart || cart.length === 0) return null; // hide when empty
+  const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+
+  // ✅ hide if not logged in OR cart is empty
+  if (!token || !cart || cart.length === 0) return null;
 
   return (
     <AnimatePresence>
