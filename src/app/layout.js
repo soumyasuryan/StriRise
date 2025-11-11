@@ -1,9 +1,9 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { CartProvider } from "./utils/CartContext"; // ✅ adjust path if needed
+import { CartProvider } from "./utils/CartContext";
 import { Toaster } from "react-hot-toast";
 import FloatingCartButton from "./components/FloatingCartButton";
-
+import BlobBackground from "./components/BlobBackground";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,11 +24,16 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {/* ✅ Wrap client-side providers inside body */}
         <CartProvider>
-          {children}
-          <Toaster position="bottom-center" />
-          <FloatingCartButton />
+          {/* ✅ Animated pink blob background */}
+          <BlobBackground />
+
+          {/* ✅ Main app content */}
+          <div className="relative z-10">
+            {children}
+            <Toaster position="bottom-center" />
+            <FloatingCartButton />
+          </div>
         </CartProvider>
       </body>
     </html>
