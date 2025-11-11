@@ -5,6 +5,8 @@ import Footer from "../components/footer";
 import { apiFetch } from "../utils/api";
 import RequireAuth from "../utils/RequireAuth";
 import withAuth from "../utils/withAuth";
+import { motion, AnimatePresence } from "framer-motion";
+import { Lightbulb, Loader2 } from "lucide-react";
 
 function BusinessRecommendation() {
   const [formData, setFormData] = useState({
@@ -15,14 +17,13 @@ function BusinessRecommendation() {
     Practical_Skills: "",
     Interest_Area: "",
     Work_Mode: "",
-    Risk_Tolerance: ""
+    Risk_Tolerance: "",
   });
 
   const [loading, setLoading] = useState(false);
   const [prediction, setPrediction] = useState(null);
   const [error, setError] = useState(null);
 
-  // ✅ Replace with your dataset unique values
   const interestAreas = [
     "Education",
     "Food & Beverage",
@@ -33,10 +34,9 @@ function BusinessRecommendation() {
     "Creative Services",
     "E-commerce",
     "Apparel",
-    "Beauty"
+    "Beauty",
   ];
 
-  // ✅ You can later load this dynamically from backend or JSON file
   const practicalSkills = [
     "Digital Marketing, Food Delivery",
     "Farming, Hair Styling",
@@ -45,15 +45,11 @@ function BusinessRecommendation() {
     "Makeup, Poultry Care",
     "Tailoring, Embroidery",
     "Crafting, Home Cleaning, Candle Making",
-    "Poultry Care, Embroidery, Digital Marketing, Content Creation"
+    "Poultry Care, Embroidery, Digital Marketing, Content Creation",
   ];
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+  const handleChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -62,16 +58,16 @@ function BusinessRecommendation() {
     setPrediction(null);
 
     try {
-       const res = await apiFetch("/predict", {
+      const res = await apiFetch("/predict", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(formData),
       });
 
       const data = await res.json();
       if (data.success) setPrediction(data.predicted_business);
       else setError(data.error || "Prediction failed");
-    } catch (err) {
+    } catch {
       setError("Backend not reachable 😢");
     } finally {
       setLoading(false);
@@ -80,181 +76,167 @@ function BusinessRecommendation() {
 
   return (
     <RequireAuth>
-    <div className="min-h-screen bg-pink-100 flex flex-col">
-      <NavBar />
-      <main className="flex-grow container mx-auto px-4 py-10">
-        <h1 className="text-3xl font-bold text-center mb-6 text-pink-800">
-           Business Idea Recommender
-        </h1>
+      <div className="min-h-screen bg-gradient-to-b from-pink-100 to-white flex flex-col">
+        <NavBar />
+        <main className="flex-grow container mx-auto px-4 py-10">
+          <motion.h1
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-4xl font-extrabold text-center mb-10 text-pink-800"
+          >
+            🌸 Business Idea Recommender
+          </motion.h1>
 
-        <form
-          onSubmit={handleSubmit}
-          className="bg-white shadow-lg rounded-2xl p-6 max-w-2xl mx-auto border border-pink-200"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Age */}
-            <div>
-              <label className="block font-semibold text-pink-900 mb-1">Age</label>
-              <input
-                type="number"
-                name="Age"
-                value={formData.Age}
-                onChange={handleChange}
-                required
-                className="w-full border border-pink-300 rounded-lg p-2 focus:ring-2 focus:ring-pink-400 focus:outline-none bg-pink-50 text-gray-800"
-              />
-            </div>
+          <motion.form
+            onSubmit={handleSubmit}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="bg-white shadow-lg rounded-3xl p-8 max-w-3xl mx-auto border border-pink-200 backdrop-blur-sm"
+          >
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[
+                {
+                  label: "Age",
+                  type: "number",
+                  name: "Age",
+                  placeholder: "Enter your age",
+                },
+              ].map((input) => (
+                <div key={input.name}>
+                  <label className="block font-semibold text-pink-900 mb-1">
+                    {input.label}
+                  </label>
+                  <input
+                    {...input}
+                    value={formData[input.name]}
+                    onChange={handleChange}
+                    required
+                    className="w-full border border-pink-300 rounded-lg p-2 bg-pink-50 text-gray-800 focus:ring-2 focus:ring-pink-400 focus:outline-none transition"
+                  />
+                </div>
+              ))}
 
-            {/* Gender */}
-            <div>
-              <label className="block font-semibold text-pink-900 mb-1">Gender</label>
-              <select
+              <Select
+                label="Gender"
                 name="Gender"
                 value={formData.Gender}
                 onChange={handleChange}
-                required
-                className="w-full border border-pink-300 rounded-lg p-2 focus:ring-2 focus:ring-pink-400 bg-pink-50 text-gray-800"
-              >
-                <option value="">Select</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-              </select>
-            </div>
-
-            {/* Location Type */}
-            <div>
-              <label className="block font-semibold text-pink-900 mb-1">Location Type</label>
-              <select
+                options={["Male", "Female", "Other"]}
+              />
+              <Select
+                label="Location Type"
                 name="Location_Type"
                 value={formData.Location_Type}
                 onChange={handleChange}
-                required
-                className="w-full border border-pink-300 rounded-lg p-2 focus:ring-2 focus:ring-pink-400 bg-pink-50 text-gray-800"
-              >
-                <option value="">Select</option>
-                <option>Rural</option>
-                <option>Urban</option>
-                <option>Semi-Urban</option>
-              </select>
-            </div>
-
-            {/* Budget Range */}
-            <div>
-              <label className="block font-semibold text-pink-900 mb-1">Budget Range</label>
-              <select
+                options={["Rural", "Urban", "Semi-Urban"]}
+              />
+              <Select
+                label="Budget Range"
                 name="Budget_Range"
                 value={formData.Budget_Range}
                 onChange={handleChange}
-                required
-                className="w-full border border-pink-300 rounded-lg p-2 focus:ring-2 focus:ring-pink-400 bg-pink-50 text-gray-800"
-              >
-                <option value="">Select</option>
-                <option>Low</option>
-                <option>Medium</option>
-                <option>High</option>
-              </select>
-            </div>
+                options={["Low", "Medium", "High"]}
+              />
 
-            {/* Practical Skills - now dropdown */}
-            <div className="md:col-span-2">
-              <label className="block font-semibold text-pink-900 mb-1">Practical Skills</label>
-              <select
+              <Select
+                label="Practical Skills"
                 name="Practical_Skills"
                 value={formData.Practical_Skills}
                 onChange={handleChange}
-                required
-                className="w-full border border-pink-300 rounded-lg p-2 focus:ring-2 focus:ring-pink-400 bg-pink-50 text-gray-800"
-              >
-                <option value="">Select Practical Skills</option>
-                {practicalSkills.map((skill, index) => (
-                  <option key={index} value={skill}>
-                    {skill}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Interest Area - now dropdown */}
-            <div className="md:col-span-2">
-              <label className="block font-semibold text-pink-900 mb-1">Interest Area</label>
-              <select
+                options={practicalSkills}
+                fullWidth
+              />
+              <Select
+                label="Interest Area"
                 name="Interest_Area"
                 value={formData.Interest_Area}
                 onChange={handleChange}
-                required
-                className="w-full border border-pink-300 rounded-lg p-2 focus:ring-2 focus:ring-pink-400 bg-pink-50 text-gray-800"
-              >
-                <option value="">Select Interest Area</option>
-                {interestAreas.map((area, index) => (
-                  <option key={index} value={area}>
-                    {area}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Work Mode */}
-            <div>
-              <label className="block font-semibold text-pink-900 mb-1">Work Mode</label>
-              <select
+                options={interestAreas}
+                fullWidth
+              />
+              <Select
+                label="Work Mode"
                 name="Work_Mode"
                 value={formData.Work_Mode}
                 onChange={handleChange}
-                required
-                className="w-full border border-pink-300 rounded-lg p-2 focus:ring-2 focus:ring-pink-400 bg-pink-50 text-gray-800"
-              >
-                <option value="">Select</option>
-                <option>Home-based</option>
-                <option>Office</option>
-                <option>Field Work</option>
-              </select>
-            </div>
-
-            {/* Risk Tolerance */}
-            <div>
-              <label className="block font-semibold text-pink-900 mb-1">Risk Tolerance</label>
-              <select
+                options={["Home-based", "Office", "Field Work"]}
+              />
+              <Select
+                label="Risk Tolerance"
                 name="Risk_Tolerance"
                 value={formData.Risk_Tolerance}
                 onChange={handleChange}
-                required
-                className="w-full border border-pink-300 rounded-lg p-2 focus:ring-2 focus:ring-pink-400 bg-pink-50 text-gray-800"
-              >
-                <option value="">Select</option>
-                <option>Low</option>
-                <option>Medium</option>
-                <option>High</option>
-              </select>
+                options={["Low", "Medium", "High"]}
+              />
             </div>
-          </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="mt-6 w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-2 px-4 rounded-lg transition"
-          >
-            {loading ? "Predicting..." : "Get Recommendation"}
-          </button>
-        </form>
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              disabled={loading}
+              type="submit"
+              className="mt-8 w-full bg-pink-600 hover:bg-pink-700 text-white font-semibold py-3 rounded-full transition-all flex justify-center items-center"
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Predicting...
+                </>
+              ) : (
+                "💡 Get Recommendation"
+              )}
+            </motion.button>
+          </motion.form>
 
-        {error && (
-          <p className="text-red-600 text-center mt-4 font-medium">{error}</p>
-        )}
+          {error && (
+            <p className="text-red-600 text-center mt-4 font-medium">{error}</p>
+          )}
 
-        {prediction && (
-          <div className="mt-6 text-center bg-pink-200 rounded-xl p-4 shadow-md max-w-md mx-auto">
-            <h2 className="text-xl font-semibold text-pink-800">
-              Recommended Business Idea:
-            </h2>
-            <p className="text-2xl font-bold text-pink-900 mt-2">{prediction}</p>
-          </div>
-        )}
-      </main>
-
-      <Footer />
-    </div>
+          <AnimatePresence>
+            {prediction && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+                className="mt-10 text-center bg-gradient-to-r from-pink-200 to-pink-100 rounded-2xl p-6 shadow-md max-w-md mx-auto border border-pink-300"
+              >
+                <div className="flex items-center justify-center gap-2 text-pink-800 mb-2">
+                  <Lightbulb className="w-6 h-6" />
+                  <h2 className="text-xl font-semibold">Your Recommended Idea</h2>
+                </div>
+                <p className="text-2xl font-bold text-pink-900">
+                  {prediction}
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </main>
+        <Footer />
+      </div>
     </RequireAuth>
   );
 }
-export default withAuth(BusinessRecommendation)
+
+// ✅ Reusable Select Component
+function Select({ label, name, value, onChange, options, fullWidth }) {
+  return (
+    <div className={fullWidth ? "md:col-span-2" : ""}>
+      <label className="block font-semibold text-pink-900 mb-1">{label}</label>
+      <select
+        name={name}
+        value={value}
+        onChange={onChange}
+        required
+        className="w-full border border-pink-300 rounded-lg p-2 focus:ring-2 focus:ring-pink-400 bg-pink-50 text-gray-800 transition"
+      >
+        <option value="">Select {label}</option>
+        {options.map((opt, i) => (
+          <option key={i} value={opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}
+
+export default withAuth(BusinessRecommendation);
