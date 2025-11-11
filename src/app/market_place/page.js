@@ -111,24 +111,27 @@ function Marketplace() {
     </RequireAuth>
   );
 }
-
 function Card({ item, activeTab }) {
   const [imageLoaded, setImageLoaded] = useState(false);
   const { addToCart } = useCart();
 
+  const hasImage = Boolean(item.image_url);
+
   // Preload images asynchronously (for smooth UI)
   useEffect(() => {
-    if (item.image_url && activeTab === "rentable") {
+    if (hasImage && activeTab === "rentable") {
       const img = new Image();
       img.src = item.image_url;
       img.onload = () => setImageLoaded(true);
-      img.onerror = () => setImageLoaded(true); // fallback to prevent hang
-    } else {
-      // Courses or purchasable — no heavy preload needed
+      img.onerror = () => setImageLoaded(true);
+    } else if (hasImage) {
       const timer = setTimeout(() => setImageLoaded(true), 200);
       return () => clearTimeout(timer);
+    } else {
+      // No image — instantly mark as loaded
+      setImageLoaded(true);
     }
-  }, [item.image_url, activeTab]);
+  }, [item.image_url, activeTab, hasImage]);
 
   const handleAddToCart = () => {
     const newItem = {
@@ -140,11 +143,7 @@ function Card({ item, activeTab }) {
           : activeTab === "rentable"
           ? item.rent
           : item.price,
-      image:
-        item.image_url ||
-        (activeTab === "courses"
-          ? "/images/default-course.jpg"
-          : "/images/placeholder.jpg"),
+      image: hasImage ? item.image_url : null,
       type: activeTab,
     };
     addToCart(newItem);
@@ -153,21 +152,18 @@ function Card({ item, activeTab }) {
 
   return (
     <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition transform hover:-translate-y-2 overflow-hidden p-6 flex flex-col h-full">
-      {/* Optimized image handling */}
-      {!imageLoaded ? (
-        <div className="w-full h-56 bg-gray-200 mb-4 animate-pulse rounded-lg" />
-      ) : (
-        <img
-          src={
-            item.image_url ||
-            (activeTab === "courses"
-              ? "/images/default-course.jpg"
-              : "/images/placeholder.jpg")
-          }
-          alt={item.product_name || item.name}
-          className="w-full h-56 object-cover mb-4 rounded-lg"
-          loading="lazy"
-        />
+      {/* Only render image section if an image exists */}
+      {hasImage && (
+        !imageLoaded ? (
+          <div className="w-full h-56 bg-gray-200 mb-4 animate-pulse rounded-lg" />
+        ) : (
+          <img
+            src={item.image_url}
+            alt={item.product_name || item.name}
+            className="w-full h-56 object-cover mb-4 rounded-lg"
+            loading="lazy"
+          />
+        )
       )}
 
       <div className="flex-1 flex flex-col">
@@ -198,6 +194,5 @@ function Card({ item, activeTab }) {
     </div>
   );
 }
-
 
 export default withAuth(Marketplace);
