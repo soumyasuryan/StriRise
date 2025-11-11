@@ -114,9 +114,9 @@ function Marketplace() {
 
 // Separate Card component to handle per-item image lazy loading
 import { useCart } from "../utils/CartContext"; // Add this line
-// import toast from "react-hot-toast";
+import toast from "react-hot-toast";
 function Card({ item, activeTab }) {
-  // toast.success(`${newItem.name} added to cart!`);
+
   const [imageLoaded, setImageLoaded] = useState(false);
   const { addToCart } = useCart();
 
@@ -139,7 +139,7 @@ function Card({ item, activeTab }) {
       type: activeTab,
     };
     addToCart(newItem);
-    alert(`${newItem.name} added to cart!`);
+    toast.success(`${newItem.name} added to cart!`);
   };
 
   return (
