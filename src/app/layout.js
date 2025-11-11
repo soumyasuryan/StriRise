@@ -2,6 +2,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { CartProvider } from "./utils/CartContext"; // ✅ adjust path if needed
 import { Toaster } from "react-hot-toast";
+import FloatingCartButton from "./components/FloatingCartButton";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,6 +28,7 @@ export default function RootLayout({ children }) {
         <CartProvider>
           {children}
           <Toaster position="bottom-center" />
+          <FloatingCartButton />
         </CartProvider>
       </body>
     </html>
