@@ -52,7 +52,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="flex flex-col min-h-screen bg-pink-50 text-white">
+    <div className="flex flex-col min-h-screen bg-transparent text-white">
       {/* Navbar on top */}
       <div className="absolute w-full z-50">
         <NavBar />

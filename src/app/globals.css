@@ -85,3 +85,41 @@ body {
     transform: translate(30px, -50px) scale(1.2);
   }
 }
+.feather-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.feather {
+  position: absolute;
+  top: -50px;
+  left: calc(10% + 80% * var(--rand, 0));
+  width: 40px;
+  height: 20px;
+  background: radial-gradient(ellipse at center, #f9a8d4 0%, #f472b6 60%, transparent 100%);
+  border-radius: 50% 50% 60% 40% / 60% 40% 50% 50%;
+  opacity: 0.6;
+  filter: blur(1px);
+  animation: fall 12s linear infinite, sway 4s ease-in-out infinite;
+}
+
+@keyframes fall {
+  0% {
+    transform: translateY(-100px) rotate(0deg);
+  }
+  100% {
+    transform: translateY(110vh) rotate(360deg);
+  }
+}
+
+@keyframes sway {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(50px);
+  }
+}

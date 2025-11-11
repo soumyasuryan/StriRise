@@ -4,6 +4,7 @@ import { CartProvider } from "./utils/CartContext";
 import { Toaster } from "react-hot-toast";
 import FloatingCartButton from "./components/FloatingCartButton";
 import BlobBackground from "./components/BlobBackground";
+import FeatherFall from "./components/FeatherFall";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
         <CartProvider>
           {/* ✅ Animated pink blob background */}
           <BlobBackground />
+          <FeatherFall></FeatherFall>
 
           {/* ✅ Main app content */}
           <div className="relative z-10">
