@@ -5,6 +5,7 @@ import Footer from "../components/footer";
 import { apiFetch } from "../utils/api";
 import RequireAuth from "../utils/RequireAuth";
 import withAuth from "../utils/withAuth";
+import Link from "next/link";
 
 
 function HomePage() {
@@ -70,23 +71,29 @@ function HomePage() {
             </p>
           ) : (
             skills.slice(0, 9).map(([name, info], index) => (
-              <div
-                key={index}
-                className="cursor-pointer relative group bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-2xl transition-transform transform hover:-translate-y-2"
-              >
-                <img
-                  src={info.image}
-                  alt={name}
-                  className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-90"
-                />
-                <div className="absolute inset-0 bg-pink-800 bg-opacity-80 text-white flex flex-col justify-center items-center px-4 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                  <h3 className="text-lg font-semibold mb-2">{name}</h3>
-                  <p className="text-sm line-clamp-5">{info.summary}</p>
-                </div>
-                <div className="p-4 text-center">
-                  <h3 className="text-lg font-bold text-pink-700">{name}</h3>
-                </div>
-              </div>
+          
+
+<Link
+  href={`/skill/${encodeURIComponent(name)}`}
+  key={index}
+  className="cursor-pointer relative group bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-2xl transition-transform transform hover:-translate-y-2"
+>
+  <img
+    src={info.image}
+    alt={name}
+    className="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-90"
+  />
+
+  <div className="absolute inset-0 bg-pink-800 bg-opacity-80 text-white flex flex-col justify-center items-center px-4 text-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+    <h3 className="text-lg font-semibold mb-2">{name}</h3>
+    <p className="text-sm line-clamp-5">{info.summary}</p>
+  </div>
+
+  <div className="p-4 text-center">
+    <h3 className="text-lg font-bold text-pink-700">{name}</h3>
+  </div>
+</Link>
+
             ))
           )}
         </div>
