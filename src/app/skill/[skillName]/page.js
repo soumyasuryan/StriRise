@@ -41,7 +41,7 @@ export default function SkillDetailPage() {
 
         <img
           src={skill.image}
-          className="w-full h-80 object-cover rounded-2xl shadow mb-6"
+          className="w-full h-auto object-cover rounded-2xl shadow mb-6"
         />
 
         <p className="text-lg text-gray-700 leading-relaxed mb-10">
