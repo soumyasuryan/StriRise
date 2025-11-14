@@ -6,9 +6,6 @@ import NavBar from "@/app/components/navbar";
 import Footer from "@/app/components/footer";
 import { apiFetch } from "../../utils/api";
 import Link from "next/link";
-
-"use client";
-
 export const dynamic = "force-dynamic";
 
 export default function SkillPage({ params }) {
