@@ -33,6 +33,8 @@ export default function SkillDetailPage() {
 
     fetchData();
   }, [skillName]);
+  console.log("PARAM FROM ROUTE:", skillName);
+
 
   if (!skill) return <p className="p-10 text-center">Loading...</p>;
 
