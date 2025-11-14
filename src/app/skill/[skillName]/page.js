@@ -31,7 +31,7 @@ export default function SkillDetailPage() {
   if (!skill) return <p>Loading...</p>;
 
   return (
-    <div className="min-h-screen bg-pink-50">
+    <div className="min-h-screen bg-transparent">
       <NavBar />
 
       <div className="max-w-5xl mx-auto p-6 mt-20">
