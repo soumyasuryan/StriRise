@@ -26,11 +26,11 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <CartProvider>
-          {/* ✅ Animated pink blob background */}
+         
           <BlobBackground />
           <FeatherFall></FeatherFall>
 
-          {/* ✅ Main app content */}
+     
           <div className="relative z-10">
             {children}
             <Toaster position="bottom-center" />
