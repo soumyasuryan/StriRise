@@ -8,7 +8,9 @@ import { apiFetch } from "../../utils/api";
 import Link from "next/link";
 
 export default function SkillDetailPage() {
-  const { skillName } = useParams();
+  const { skillName: rawSkillName } = useParams();
+  const skillName = decodeURIComponent(rawSkillName); // ✅ FIX
+
   const [skill, setSkill] = useState(null);
   const [otherSkills, setOtherSkills] = useState([]);
 
@@ -17,8 +19,10 @@ export default function SkillDetailPage() {
       const res = await apiFetch("/api/all-skills");
       const data = await res.json();
 
-      setSkill(data[skillName]);
-      setOtherSkills(Object.entries(data).filter(([name]) => name !== skillName));
+      setSkill(data[skillName]); // ✅ NOW matches your real keys
+      setOtherSkills(
+        Object.entries(data).filter(([name]) => name !== skillName)
+      );
     };
 
     fetchData();
@@ -31,7 +35,9 @@ export default function SkillDetailPage() {
       <NavBar />
 
       <div className="max-w-5xl mx-auto p-6 mt-20">
-        <h1 className="text-4xl font-bold text-pink-700 mb-4">{skillName}</h1>
+        <h1 className="text-4xl font-bold text-pink-700 mb-4">
+          {skillName}
+        </h1>
 
         <img
           src={skill.image}
@@ -66,3 +72,4 @@ export default function SkillDetailPage() {
     </div>
   );
 }
+
