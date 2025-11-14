@@ -7,18 +7,62 @@ import Footer from "@/app/components/footer";
 import { apiFetch } from "../../utils/api";
 import Link from "next/link";
 
-export const dynamic = "force-dynamic";
+export default function SkillDetailPage() {
+  const { skillName } = useParams();
+  const [skill, setSkill] = useState(null);
+  const [otherSkills, setOtherSkills] = useState([]);
 
-export default function SkillPage() {
-  const params = useParams(); // ✅ Correct way to get route params in client component
+  useEffect(() => {
+    const fetchData = async () => {
+      const res = await apiFetch("/api/all-skills");
+      const data = await res.json();
 
-  console.log("PARAMS:", params);
-  console.log("SKILL NAME:", params.skillName); // must match folder name
+      setSkill(data[skillName]);
+      setOtherSkills(Object.entries(data).filter(([name]) => name !== skillName));
+    };
+
+    fetchData();
+  }, [skillName]);
+
+  if (!skill) return <p>Loading...</p>;
 
   return (
-    <div>
-      <h1>Skill Page</h1>
-      <p>Skill Name: {params.skillName}</p>
+    <div className="min-h-screen bg-pink-50">
+      <NavBar />
+
+      <div className="max-w-5xl mx-auto p-6 mt-20">
+        <h1 className="text-4xl font-bold text-pink-700 mb-4">{skillName}</h1>
+
+        <img
+          src={skill.image}
+          className="w-full h-80 object-cover rounded-2xl shadow mb-6"
+        />
+
+        <p className="text-lg text-gray-700 leading-relaxed mb-10">
+          {skill.summary}
+        </p>
+
+        <h2 className="text-2xl font-bold text-pink-700 mb-4">
+          Explore More Skills
+        </h2>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+          {otherSkills.map(([name, info], idx) => (
+            <Link
+              href={`/skill/${encodeURIComponent(name)}`}
+              key={idx}
+              className="bg-white rounded-2xl shadow hover:shadow-xl transition overflow-hidden"
+            >
+              <img src={info.image} className="w-full h-40 object-cover" />
+              <div className="p-4">
+                <h3 className="font-semibold text-pink-700 text-lg">{name}</h3>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      <Footer />
     </div>
   );
 }
