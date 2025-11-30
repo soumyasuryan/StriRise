@@ -52,7 +52,7 @@ function HomePage() {
           <p className="text-lg md:text-xl text-pink-100 mt-4 max-w-2xl drop-shadow-sm">
             Join StriRise — your platform to turn passion into purpose and ideas into impact.
           </p>
-          <a href="/business_suggestion" className="mt-8 bg-pink-600 text-white px-8 py-3 rounded-full hover:bg-pink-700 transition duration-300 shadow-lg text-lg font-semibold">
+          <a href="/business_suggestion" className="mt-8 bg-pink-600 text-white px-8 py-3 rounded-lg hover:bg-pink-700 transition duration-300 shadow-lg text-lg font-semibold">
             Get Started
           </a>
         </div>
