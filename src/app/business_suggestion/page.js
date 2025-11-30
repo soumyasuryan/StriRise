@@ -179,13 +179,7 @@ const [roadmapLoading, setRoadmapLoading] = useState(false);
                 onChange={handleChange}
                 options={["Rural", "Urban", "Semi-Urban"]}
               />
-              <Select
-                label="Budget Range"
-                name="Budget_Range"
-                value={formData.Budget_Range}
-                onChange={handleChange}
-                options={["Low", "Medium", "High"]}
-              />
+              
               <Select
                 label="Budget Range"
                 name="Budget_Range"
@@ -282,11 +276,12 @@ const [roadmapLoading, setRoadmapLoading] = useState(false);
           </AnimatePresence>
           {prediction && (
   <div className="mt-6 text-center">
+    <p className="text-gray-700 mb-2">Click below after getting your recommended idea to generate a personalized AI roadmap 📋</p>
     <motion.button
       whileTap={{ scale: 0.95 }}
       disabled={roadmapLoading}
       onClick={handleSubmit2}
-      className="mt-4 w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 rounded-full transition-all flex justify-center items-center"
+      className="mt-2 w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 rounded-full transition-all flex justify-center items-center"
     >
       {roadmapLoading ? (
         <>
@@ -303,6 +298,7 @@ const [roadmapLoading, setRoadmapLoading] = useState(false);
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0 }}
         className="mt-6 text-left bg-gradient-to-r from-pink-100 to-pink-50 rounded-2xl p-6 shadow-md max-w-3xl mx-auto border border-pink-300"
+        ref={(el) => el && el.scrollIntoView({ behavior: "smooth" })}
       >
         <h3 className="text-xl font-semibold text-pink-800 mb-3">Your AI Roadmap</h3>
         <p className="text-pink-900 whitespace-pre-line">{roadmap}</p>
@@ -310,6 +306,7 @@ const [roadmapLoading, setRoadmapLoading] = useState(false);
     )}
   </div>
 )}
+
 
         </main>
         <Footer />
