@@ -79,10 +79,10 @@ function BusinessRecommendation() {
       <div className="min-h-screen bg-transparent flex flex-col">
         <NavBar />
         <main className="flex-grow container mx-auto px-4 py-10">
-          <p>
-          <h1 class="text-4xl font-bold text-center mb-2 text-pink-800" style="opacity: 1; transform: none;">💸Business Idea Recommender</h1>
-          <p className="text-pink-800 mb-10 text-md">We mind your business, so you don't have to.</p>
-</p>
+          <div>
+          <motion.h1 class="text-4xl font-bold text-center mb-2 text-pink-800" style="opacity: 1; transform: none;">💸Business Idea Recommender</motion.h1>
+          <motion.p className="text-pink-800 mb-10 text-md">We mind your business, so you don't have to.</motion.p>
+</div>
           <motion.form
             onSubmit={handleSubmit}
             initial={{ opacity: 0, y: 20 }}
