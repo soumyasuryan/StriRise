@@ -19,6 +19,9 @@ function BusinessRecommendation() {
     Work_Mode: "",
     Risk_Tolerance: "",
   });
+  const [roadmap, setRoadmap] = useState(null);
+const [roadmapLoading, setRoadmapLoading] = useState(false);
+
 
   const [loading, setLoading] = useState(false);
   const [prediction, setPrediction] = useState(null);
@@ -73,27 +76,64 @@ function BusinessRecommendation() {
       setLoading(false);
     }
   };
+  const handleSubmit2 = async (e) => {
+    e.preventDefault();
+    setRoadmapLoading(true);
+    setError(null);
+
+    // Format payload for your Hinglish model
+    const payload = {
+      gender: formData.Gender === "Male" ? "A man" : 
+              formData.Gender === "Female" ? "A woman" : "A youth",
+      age: parseInt(formData.Age),
+      location: formData.Location_Type,
+      budget: formData.Budget_Range_inNum || formData.Budget_Range, // Prefer numeric
+      skills: formData.Practical_Skills,
+      risk_tolerance: formData.Risk_Tolerance.toLowerCase(),
+      business_type: prediction || formData.Interest_Area // Use prediction or interest
+    };
+
+    try {
+      const res = await apiFetch("/api/business-roadmap", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setRoadmap(data.roadmap || data.response); // Adjust based on your backend response
+      } else {
+        setError(data.error || "Roadmap generation failed");
+      }
+    } catch (err) {
+      setError("Roadmap service not reachable 😢");
+    } finally {
+      setRoadmapLoading(false);
+    }
+  };
+  
 
   return (
     <RequireAuth>
       <div className="min-h-screen bg-transparent flex flex-col">
         <NavBar />
         <main className="flex-grow container mx-auto px-4 py-10">
-         <div>
-  <motion.h1
-    className="text-4xl font-bold text-center mb-2 text-pink-800"
-    style={{ opacity: 1, transform: "none" }}
-  >
-    💸 Business Idea Recommender
-  </motion.h1>
+          <div>
+            <motion.h1
+              className="text-4xl font-bold text-center mb-2 text-pink-800"
+              style={{ opacity: 1, transform: "none" }}
+            >
+              💸 Business Idea Recommender
+            </motion.h1>
 
-  <motion.p
-    className="text-pink-800 mb-10 text-md"
-    style={{ opacity: 1, transform: "none" }}
-  >
-    We mind your business, so you don't have to.
-  </motion.p>
-</div>
+            <motion.p
+              className="text-pink-800 mb-10 text-md text-center"
+              style={{ opacity: 1, transform: "none" }}
+            >
+              We mind your business, so you don't have to.
+            </motion.p>
+          </div>
 
           <motion.form
             onSubmit={handleSubmit}
@@ -146,7 +186,29 @@ function BusinessRecommendation() {
                 onChange={handleChange}
                 options={["Low", "Medium", "High"]}
               />
-
+              <Select
+                label="Budget Range"
+                name="Budget_Range"
+                value={formData.Budget_Range}
+                onChange={handleChange}
+                options={["Low", "Medium", "High"]}
+              />
+              <Select
+                label="Budget Range (₹)"
+                name="Budget_Range_inNum"
+                value={formData.Budget_Range_inNum}
+                onChange={handleChange}
+                options={[
+                  "5000-15000",
+                  "15000-30000",
+                  "30000-50000",
+                  "50000-75000",
+                  "75000-100000",
+                  "100000-150000",
+                  "150000-200000",
+                  "200000+"
+                ]}
+              />
               <Select
                 label="Practical Skills"
                 name="Practical_Skills"
@@ -215,8 +277,40 @@ function BusinessRecommendation() {
                   {prediction}
                 </p>
               </motion.div>
+              
             )}
           </AnimatePresence>
+          {prediction && (
+  <div className="mt-6 text-center">
+    <motion.button
+      whileTap={{ scale: 0.95 }}
+      disabled={roadmapLoading}
+      onClick={handleSubmit2}
+      className="mt-4 w-full bg-pink-500 hover:bg-pink-600 text-white font-semibold py-3 rounded-full transition-all flex justify-center items-center"
+    >
+      {roadmapLoading ? (
+        <>
+          <Loader2 className="w-5 h-5 mr-2 animate-spin" /> Generating Roadmap...
+        </>
+      ) : (
+        "📋 Generate AI Roadmap"
+      )}
+    </motion.button>
+
+    {roadmap && (
+      <motion.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0 }}
+        className="mt-6 text-left bg-gradient-to-r from-pink-100 to-pink-50 rounded-2xl p-6 shadow-md max-w-3xl mx-auto border border-pink-300"
+      >
+        <h3 className="text-xl font-semibold text-pink-800 mb-3">Your AI Roadmap</h3>
+        <p className="text-pink-900 whitespace-pre-line">{roadmap}</p>
+      </motion.div>
+    )}
+  </div>
+)}
+
         </main>
         <Footer />
       </div>
