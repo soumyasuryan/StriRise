@@ -77,42 +77,46 @@ const [roadmapLoading, setRoadmapLoading] = useState(false);
     }
   };
   const handleSubmit2 = async (e) => {
-    e.preventDefault();
-    setRoadmapLoading(true);
-    setError(null);
+  e.preventDefault();
+  setRoadmapLoading(true);
+  setError(null);
 
-    // Format payload for your Hinglish model
-    const payload = {
-      gender: formData.Gender === "Male" ? "A man" : 
-              formData.Gender === "Female" ? "A woman" : "A youth",
-      age: parseInt(formData.Age),
-      location: formData.Location_Type,
-      budget: formData.Budget_Range_inNum || formData.Budget_Range, // Prefer numeric
-      skills: formData.Practical_Skills,
-      risk_tolerance: formData.Risk_Tolerance.toLowerCase(),
-      business_type: prediction || formData.Interest_Area // Use prediction or interest
-    };
+  const payload = {
+    gender: formData.Gender === "Male" ? "A man" :
+            formData.Gender === "Female" ? "A woman" : "A youth",
+    age: parseInt(formData.Age),
+    location: formData.Location_Type,
+    budget: formData.Budget_Range_inNum || formData.Budget_Range,
+    skills: formData.Practical_Skills,
+    risk_tolerance: formData.Risk_Tolerance.toLowerCase(),
+    business_type: prediction || formData.Interest_Area
+  };
 
-    try {
-      const res = await apiFetch("/api/business-roadmap", {
+  try {
+    const res = await fetch(
+      "https://striRise-BackendDocker.soumyasuryan.hf.space/business-roadmap",
+      {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-      if (data.success) {
-        setRoadmap(data.roadmap || data.response); // Adjust based on your backend response
-      } else {
-        setError(data.error || "Roadmap generation failed");
       }
-    } catch (err) {
-      setError("Roadmap service not reachable 😢");
-    } finally {
-      setRoadmapLoading(false);
+    );
+
+    const data = await res.json();
+
+    if (data.success) {
+      setRoadmap(data.roadmap || data.response);
+    } else {
+      setError(data.error || "Roadmap generation failed");
     }
-  };
-  
+
+  } catch (err) {
+    setError("Roadmap service not reachable 😢");
+  } finally {
+    setRoadmapLoading(false);
+  }
+};
+
 
   return (
     <RequireAuth>
