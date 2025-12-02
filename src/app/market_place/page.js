@@ -52,13 +52,25 @@ function Marketplace() {
         {/* Hero Section */}
         <section className="relative w-full h-[20vh] flex items-center justify-center">
           <div className="absolute inset-0"></div>
-          <h1 className="relative text-5xl font-extrabold text-pink-700 text-center drop-shadow-lg">
-            StriRise Marketplace
-          </h1>
+          <div className="flex flex-col">
+          <div className="flex items-center justify-center gap-3 mt-6 ">
+  <div className="h-[2px] md:w-20 bg-pink-300 px-auto"></div>
+  <span className="text-3xl font-bold text-pink-600 tracking-wide text-center">
+     The Women’s Business Launchpad
+  </span>
+  <div className="h-[2px] md:w-20 bg-pink-300"></div>
+</div>
+<p
+              className="text-pink-800 mb-6 text-md text-center"
+              
+            >
+              A dedicated marketplace providing courses and resources designed by women, for women ready to launch their entrepreneurial journey.
+            </p>
+            </div>
         </section>
 
         {/* Tab Switcher */}
-        <div className="flex sm:flex-row flex-col justify-center mt-10 gap-4 mx-20">
+        <div className="flex sm:flex-row flex-col justify-center mt-10 gap-4 mx-20 sm:mx-auto max-w-7xl">
           {["courses", "rentable", "purchasable"].map((tab) => {
             const tabLabels = {
               courses: "Courses",
@@ -70,7 +82,7 @@ function Marketplace() {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`w-full sm:w-1/2 py-3 rounded-full text-lg font-semibold transition-all duration-300
+                className={`w-full px-20 max-w-xl sm:w-1/2 py-3 rounded-full text-lg font-semibold transition-all duration-300 
                   ${
                     isActive
                       ? "bg-pink-600 text-white shadow-lg"

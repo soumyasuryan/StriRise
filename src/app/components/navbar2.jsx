@@ -33,8 +33,7 @@ export default function NavBar() {
         {/* Desktop Menu */}
         <div className="hidden md:flex space-x-8 text-white font-large items-center">
           <Link href="/home" className="hover:text-pink-200 transition">Home</Link>
-          <Link href="/business_suggestion" className="hover:text-pink-200 transition">Business Recommendation</Link>
-          <Link href="/ai_roadmap" className="hover:text-pink-200 transition">AI Roadmap</Link>
+          <Link href="/business_suggestion" className="hover:text-pink-200 transition">AI Advisor</Link>
           <Link href="/market_place" className="hover:text-pink-200 transition">Marketplace</Link>
           <Link href="/contact" className="hover:text-pink-200 transition">Contact</Link>
 
@@ -93,10 +92,9 @@ export default function NavBar() {
 
       {/* Mobile Menu Dropdown */}
       {isOpen && (
-        <div className="lg:hidden bg-pink-50/80 backdrop-blur-sm px-6 pb-4 space-y-3 text-pink-800 font-medium rounded-lg shadow">
+        <div className="lg:hidden bg-pink-50/80 backdrop-blur-sm px-6 pb-4 pt-3 space-y-3 text-pink-800 font-medium rounded-lg shadow">
           <Link href="/home" className="block hover:text-pink-200">Home</Link>
-          <Link href="/business_suggestion" className="block hover:text-pink-200">Business Recommendation</Link>
-          <Link href="/ai_roadmap" className="block hover:text-pink-200">AI Roadmap</Link>
+          <Link href="/business_suggestion" className="block hover:text-pink-200">AI Advisor</Link>
           <Link href="/marketplace" className="block hover:text-pink-200">Marketplace</Link>
           <Link href="/contact" className="block hover:text-pink-200">Contact</Link>
 
