@@ -94,7 +94,7 @@ const [roadmapLoading, setRoadmapLoading] = useState(false);
 
   try {
     const res = await fetch(
-      "https://striRise-BackendDocker.soumyasuryan.hf.space/business-roadmap",
+      "https://soumyasuryan-stririse-backend-docker.hf.space/business-roadmap",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
