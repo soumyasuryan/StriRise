@@ -15,7 +15,7 @@ export default function FloatingSelect({
   onChange={onChange}
   required={required}
   className="
-    peer w-full border border-pink-300 rounded-lg px-3 py-3 
+    peer w-full border border-pink-300 rounded-lg px-3 py-2 
     bg-pink-50 text-gray-900 appearance-none
     focus:outline-none focus:ring-2 focus:ring-pink-500
     overflow-hidden text-ellipsis whitespace-nowrap
