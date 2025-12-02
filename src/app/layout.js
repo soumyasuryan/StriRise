@@ -31,7 +31,7 @@ export default function RootLayout({ children }) {
           <FeatherFall></FeatherFall>
 
      
-          <div className="relative z-10">
+          <div className="relative z-10 backdrop-blur-sm">
             {children}
             <Toaster position="bottom-center" />
             <FloatingCartButton />

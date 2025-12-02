@@ -34,7 +34,7 @@ export default function NavBar() {
 };
 
   return (
-    <nav className="w-full bg-pink-200 shadow-md">
+    <nav className="w-full bg-backdrop-xl ">
       <div className="max-w-auto mx-10 px-6 py-5 flex justify-between items-center">
         {/* Logo */}
         <Link href="/" className="text-2xl font-bold text-pink-700">
