@@ -31,6 +31,110 @@ function StepIndicator({ step }) {
     </div>
   );
 }
+function parseRoadmapText(text) {
+  const sections = {
+    profile: "",
+    roadmap: "",
+    tools: "",
+    budget: "",
+    marketing: "",
+    govt: "",
+    motivation: ""
+  };
+
+  // Helper
+  const extract = (label) => {
+    const regex = new RegExp(`${label}:([\\s\\S]*?)(?=\\n[A-Za-z ]+:|$)`, "i");
+    const match = text.match(regex);
+    return match ? match[1].trim() : "";
+  };
+
+  sections.profile = text.split("### Input:")[0]?.trim() || "";
+  sections.roadmap = extract("4-Week Roadmap");
+  sections.tools = extract("Tools & Materials");
+  sections.budget = extract("Budget Estimate");
+  sections.marketing = extract("Marketing Tip");
+  sections.govt = extract("Sarkari Madad");
+  sections.motivation = extract("Motivation");
+
+  return sections;
+}
+function RoadmapCard({ data }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 6 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="mt-4 p-6 bg-gradient-to-r from-pink-50 to-white 
+                 rounded-2xl border border-pink-200 shadow-lg space-y-4"
+    >
+
+      {/* Recommended Business Header */}
+      <h2 className="text-2xl font-bold text-pink-700 text-center">
+        Your Personalized Business Roadmap
+      </h2>
+
+      {/* Profile Summary */}
+      {data.profile && (
+        <div className="p-4 rounded-xl bg-white border border-pink-100 shadow-sm">
+          <h3 className="text-lg font-semibold text-pink-800 mb-1">Profile Summary</h3>
+          <p className="text-pink-900 leading-relaxed whitespace-pre-line">
+            {data.profile}
+          </p>
+        </div>
+      )}
+
+      {/* Roadmap */}
+      {data.roadmap && (
+        <div className="p-4 rounded-xl bg-pink-50 border border-pink-200">
+          <h3 className="text-lg font-semibold text-pink-800 mb-2">
+            4-Week Action Plan
+          </h3>
+          <p className="text-pink-900 whitespace-pre-line">{data.roadmap}</p>
+        </div>
+      )}
+
+      {/* Tools & Materials */}
+      {data.tools && (
+        <div className="p-4 rounded-xl bg-white border border-pink-200">
+          <h3 className="text-lg font-semibold text-pink-800 mb-1">Tools & Materials</h3>
+          <p className="text-pink-900 whitespace-pre-line">{data.tools}</p>
+        </div>
+      )}
+
+      {/* Budget */}
+      {data.budget && (
+        <div className="p-4 rounded-xl bg-white border border-pink-200">
+          <h3 className="text-lg font-semibold text-pink-800 mb-1">Budget Estimate</h3>
+          <p className="text-pink-900 whitespace-pre-line">{data.budget}</p>
+        </div>
+      )}
+
+      {/* Marketing Tips */}
+      {data.marketing && (
+        <div className="p-4 rounded-xl bg-white border border-pink-200">
+          <h3 className="text-lg font-semibold text-pink-800 mb-1">Marketing Tip</h3>
+          <p className="text-pink-900 whitespace-pre-line">{data.marketing}</p>
+        </div>
+      )}
+
+      {/* Government Support */}
+      {data.govt && (
+        <div className="p-4 rounded-xl bg-white border border-pink-200">
+          <h3 className="text-lg font-semibold text-pink-800 mb-1">Government Support</h3>
+          <p className="text-pink-900 whitespace-pre-line">{data.govt}</p>
+        </div>
+      )}
+
+      {/* Motivation */}
+      {data.motivation && (
+        <div className="p-4 rounded-xl bg-pink-100 border border-pink-300 italic text-pink-800 rounded-xl">
+          "{data.motivation}"
+        </div>
+      )}
+    </motion.div>
+  );
+}
+
 
 function BusinessRecommendation() {
   // form state
@@ -495,9 +599,9 @@ const next = () => {
       <h4 className="text-pink-800 font-semibold mb-2">
         Your AI Roadmap
       </h4>
-      <pre className="whitespace-pre-wrap text-pink-900">
-        {roadmap}
-      </pre>
+      <RoadmapCard data={parseRoadmapText(roadmap)} />
+
+
     </motion.div>
   )
 )}

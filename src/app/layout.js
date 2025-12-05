@@ -34,8 +34,9 @@ export default function RootLayout({ children }) {
           <div className="relative z-10 backdrop-blur-sm">
             {children}
             <Toaster position="bottom-center" />
-            <FloatingCartButton />
+            
           </div>
+          <FloatingCartButton />
         </CartProvider>
       </body>
     </html>

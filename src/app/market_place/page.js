@@ -64,7 +64,7 @@ function Marketplace() {
               className="text-pink-800 mb-6 text-md text-center"
               
             >
-              A dedicated marketplace providing courses and resources designed by women, for women ready to launch their entrepreneurial journey.
+              A dedicated marketplace providing courses and resources designed for women ready to launch their entrepreneurial journey.
             </p>
             </div>
         </section>

@@ -8,6 +8,9 @@ import { apiFetch } from "../../utils/api";
 import Link from "next/link";
 
 export default function SkillDetailPage() {
+  
+  const [expanded, setExpanded] = useState(false);
+
   const { skillName: rawSkillName } = useParams();
   const skillName = decodeURIComponent(rawSkillName); // ✅ FIX
 
@@ -27,26 +30,47 @@ export default function SkillDetailPage() {
 
     fetchData();
   }, [skillName]);
+  
 
   if (!skill) return <p>Loading...</p>;
+  const paragraphs = skill.summary
+  .split(/\n+|\. /)        // split by newline OR sentences
+  .map(p => p.trim())
+  .filter(p => p.length > 0);
+  
 
   return (
     <div className="min-h-screen bg-transparent">
       <NavBar />
 
-      <div className="max-w-5xl mx-auto p-6 mt-20">
-        <h1 className="text-4xl font-bold text-pink-700 mb-4">
-          {skillName}
-        </h1>
+      <div className="max-w-5xl mx-auto p-6 mt-20 ">
+        <div className="flex items-center justify-center gap-3 mt-6 ">
+  <div className="h-[2px] md:w-20 bg-pink-300 px-auto"></div>
+  <span className="text-3xl font-bold text-pink-600 tracking-wide text-center">
+     {skillName}
+  </span>
+  <div className="h-[2px] md:w-20 bg-pink-300"></div>
+</div>
+        
 
         <img
           src={skill.image}
-          className="w-full h-auto object-cover rounded-2xl shadow mb-6"
+          className="w-full h-auto object-cover rounded-2xl shadow mb-6 mt-5"
         />
 
-        <p className="text-lg text-gray-700 leading-relaxed mb-10">
-          {skill.summary}
-        </p>
+        <div className="mb-10">
+  <p className="text-lg text-gray-700 leading-relaxed">
+    {expanded ? skill.summary : skill.summary.slice(0, 1050) + "..."}
+  </p>
+
+  <button
+    onClick={() => setExpanded(!expanded)}
+    className="mt-3 text-pink-600 font-semibold hover:underline"
+  >
+    {expanded ? "Read Less" : "Read More"}
+  </button>
+</div>
+
 
         <h2 className="text-2xl font-bold text-pink-700 mb-4">
           Explore More Skills
