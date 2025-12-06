@@ -64,7 +64,7 @@ function RoadmapCard({ data }) {
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mt-4 p-6 bg-gradient-to-r from-pink-50 to-white 
+      className="mt-4 p-2 pt-4 md:pt-0 md:p-6 bg-gradient-to-r from-pink-50 to-white 
                  rounded-2xl border border-pink-200 shadow-lg space-y-4"
     >
 
@@ -353,7 +353,7 @@ const next = () => {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white shadow-lg rounded-3xl p-8 max-w-3xl mx-auto border border-pink-200 backdrop-blur-sm"
+            className="bg-white shadow-lg rounded-3xl p-4 md:p-8 max-w-3xl mx-auto border border-pink-200 backdrop-blur-sm"
           >
             {/* STEP 1 - PERSONAL */}
             {step === 1 && (
@@ -594,7 +594,7 @@ const next = () => {
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mt-4 p-4 bg-white rounded-lg border border-pink-100 shadow-sm"
+      className="mt-4 md:p-4 bg-white rounded-lg md:border md:border-pink-100 md:shadow-sm"
     >
       <h4 className="text-pink-800 font-semibold mb-2">
         Your AI Roadmap
