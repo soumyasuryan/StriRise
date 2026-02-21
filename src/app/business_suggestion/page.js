@@ -31,111 +31,54 @@ function StepIndicator({ step }) {
     </div>
   );
 }
-function parseRoadmapText(text) {
-  const sections = {
-    profile: "",
-    roadmap: "",
-    tools: "",
-    budget: "",
-    marketing: "",
-    govt: "",
-    motivation: ""
-  };
 
-  // Helper
-  const extract = (label) => {
-    const regex = new RegExp(`${label}:([\\s\\S]*?)(?=\\n[A-Za-z ]+:|$)`, "i");
-    const match = text.match(regex);
-    return match ? match[1].trim() : "";
-  };
 
-  sections.profile = text.split("### Input:")[0]?.trim() || "";
-  sections.roadmap = extract("4-Week Roadmap");
-  sections.tools = extract("Tools & Materials");
-  sections.budget = extract("Budget Estimate");
-  sections.marketing = extract("Marketing Tip");
-  sections.govt = extract("Sarkari Madad");
-  sections.motivation = extract("Motivation");
-
-  return sections;
-}
+  
 function RoadmapCard({ data }) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mt-4 p-2 pt-4 md:pt-0 md:p-6 bg-gradient-to-r from-pink-50 to-white 
-                 rounded-2xl border border-pink-200 shadow-lg space-y-4"
+      className="mt-4 p-4 bg-gradient-to-r from-pink-50 to-white 
+                 rounded-2xl border border-pink-200 shadow-lg space-y-6"
     >
-
-      {/* Recommended Business Header */}
       <h2 className="text-2xl font-bold text-pink-700 text-center">
         Your Personalized Business Roadmap
       </h2>
 
-      {/* Profile Summary */}
-      {data.profile && (
-        <div className="p-4 rounded-xl bg-white border border-pink-100 shadow-sm">
-          <h3 className="text-lg font-semibold text-pink-800 mb-1">Profile Summary</h3>
-          <p className="text-pink-900 leading-relaxed whitespace-pre-line">
-            {data.profile}
+     
+
+      {/* 4 Week Plan */}
+      {data.profile_summary && (
+        <div className="p-4 rounded-xl bg-white border border-pink-200">
+          <h3 className="text-lg font-semibold text-pink-800 mb-2">
+            Your Action Plan
+          </h3>
+          <p className="text-pink-900 whitespace-pre-line">
+            {data.four_week_action_plan}
           </p>
         </div>
       )}
 
-      {/* Roadmap */}
-      {data.roadmap && (
-        <div className="p-4 rounded-xl bg-pink-50 border border-pink-200">
-          <h3 className="text-lg font-semibold text-pink-800 mb-2">
-            4-Week Action Plan
-          </h3>
-          <p className="text-pink-900 whitespace-pre-line">{data.roadmap}</p>
-        </div>
-      )}
-
-      {/* Tools & Materials */}
-      {data.tools && (
-        <div className="p-4 rounded-xl bg-white border border-pink-200">
-          <h3 className="text-lg font-semibold text-pink-800 mb-1">Tools & Materials</h3>
-          <p className="text-pink-900 whitespace-pre-line">{data.tools}</p>
-        </div>
-      )}
-
-      {/* Budget */}
-      {data.budget && (
-        <div className="p-4 rounded-xl bg-white border border-pink-200">
-          <h3 className="text-lg font-semibold text-pink-800 mb-1">Budget Estimate</h3>
-          <p className="text-pink-900 whitespace-pre-line">{data.budget}</p>
-        </div>
-      )}
+      
 
       {/* Marketing Tips */}
-      {data.marketing && (
-        <div className="p-4 rounded-xl bg-white border border-pink-200">
-          <h3 className="text-lg font-semibold text-pink-800 mb-1">Marketing Tip</h3>
-          <p className="text-pink-900 whitespace-pre-line">{data.marketing}</p>
-        </div>
-      )}
+{data.marketing_tips && data.marketing_tips.length > 0 && (
+  <div className="p-4 rounded-xl bg-white border border-pink-200">
+    <h3 className="text-lg font-semibold text-pink-800 mb-2">
+      Marketing Tips
+    </h3>
 
-      {/* Government Support */}
-      {data.govt && (
-        <div className="p-4 rounded-xl bg-white border border-pink-200">
-          <h3 className="text-lg font-semibold text-pink-800 mb-1">Government Support</h3>
-          <p className="text-pink-900 whitespace-pre-line">{data.govt}</p>
-        </div>
-      )}
-
-      {/* Motivation */}
-      {data.motivation && (
-        <div className="p-4 rounded-xl bg-pink-100 border border-pink-300 italic text-pink-800 rounded-xl">
-          "{data.motivation}"
-        </div>
-      )}
+    <ul className="list-disc list-inside text-pink-900 space-y-1">
+      {data.marketing_tips.map((tip, index) => (
+        <li key={index}>{tip}</li>
+      ))}
+    </ul>
+  </div>
+)}
     </motion.div>
   );
 }
-
-
 function BusinessRecommendation() {
   // form state
   const [formData, setFormData] = useState({
@@ -236,49 +179,56 @@ const validateStep = (currentStep) => {
   };
 
   // === keep your original handleSubmit2 (roadmap generator) exactly, wired to formData & prediction ===
-  const handleSubmit2 = async (e) => {
-    if (e) e.preventDefault();
-    setRoadmapLoading(true);
-    setError(null);
+ const handleSubmit2 = async (e) => {
+  if (e) e.preventDefault();
+  setRoadmapLoading(true);
+  setError(null);
 
-    const payload = {
-      gender:
-        formData.Gender === "Male"
-          ? "A man"
-          : formData.Gender === "Female"
-            ? "A woman"
-            : "A youth",
-      age: parseInt(formData.Age),
-      location: formData.Location_Type,
-      budget: formData.Budget_Range_inNum || formData.Budget_Range,
-      skills: formData.Practical_Skills,
-      risk_tolerance: (formData.Risk_Tolerance || "").toLowerCase(),
-      business_type: prediction || formData.Interest_Area,
-    };
-
-    try {
-      const res = await fetch(
-        "https://soumyasuryan-stririse-backenddocker.hf.space/business-roadmap",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        }
-      );
-
-      const data = await res.json();
-
-      if (data.success) {
-        setRoadmap(data.roadmap || data.response);
-      } else {
-        setError(data.error || "Roadmap generation failed");
-      }
-    } catch (err) {
-      setError("Roadmap service not reachable 😢");
-    } finally {
-      setRoadmapLoading(false);
-    }
+  const payload = {
+    gender:
+      formData.Gender === "Male"
+        ? "A man"
+        : formData.Gender === "Female"
+        ? "A woman"
+        : "A youth",
+    age: parseInt(formData.Age),
+    location: formData.Location_Type,
+    budget: formData.Budget_Range_inNum || formData.Budget_Range,
+    skills: formData.Practical_Skills,
+    risk_tolerance: (formData.Risk_Tolerance || "").toLowerCase(),
+    business_type: prediction || formData.Interest_Area,
   };
+
+  try {
+    const res = await fetch(
+      "https://soumyasuryan-stririse-backenddocker.hf.space/business-roadmap",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      }
+    );
+
+    const data = await res.json();
+
+    if (data.success) {
+      setRoadmap({
+        profile_summary: data.profile_summary,
+        four_week_action_plan: data.four_week_action_plan,
+        marketing_tips: data.marketing_tips,
+        tools_and_equipments: data.tools_and_equipments,
+      });
+      console.log(setRoadmap);
+      
+    } else {
+      setError(data.error || "Roadmap generation failed");
+    }
+  } catch (err) {
+    setError("Roadmap service not reachable 😢");
+  } finally {
+    setRoadmapLoading(false);
+  }
+};
 
   // navigation helpers
 const next = () => {
@@ -594,12 +544,9 @@ const next = () => {
     <motion.div
       initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      className="mt-4 md:p-4 bg-white rounded-lg md:border md:border-pink-100 md:shadow-sm"
-    >
-      <h4 className="text-pink-800 font-semibold mb-2">
-        Your AI Roadmap
-      </h4>
-      <RoadmapCard data={parseRoadmapText(roadmap)} />
+      className="mt-4 md:p-4 bg-white ">
+      
+      <RoadmapCard data={roadmap} />
 
 
     </motion.div>

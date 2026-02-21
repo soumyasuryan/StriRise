@@ -29,7 +29,7 @@ function EmbeddedChatBot() {
     <div className="bg-transparent min-h-screen flex flex-col">
       <NavBar />
 
-      <main className="flex-grow">
+      <main className="flex-grow"> 
         <div
           ref={gradioRef}
           className="bg-black"

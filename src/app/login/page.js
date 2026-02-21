@@ -37,7 +37,7 @@ export default function LoginPage() {
       if (res.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userLoggedIn", "true");
-        setMessage({ type: "success", text: "✅ Login successful!" });
+        setMessage({ type: "success", text: "Login successful!!!" });
         setTimeout(() => router.push("/"), 1500);
       }
       else {
