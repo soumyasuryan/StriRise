@@ -6,7 +6,135 @@ import RequireAuth from "../utils/RequireAuth";
 import withAuth from "../utils/withAuth";
 import { useCart } from "../utils/CartContext";
 import toast from "react-hot-toast";
+import { motion, AnimatePresence } from "framer-motion";
+import { ShoppingCart, BookOpen, Package, RefreshCw } from "lucide-react";
 
+/* ── Tab config ── */
+const TABS = [
+  { key: "courses",     label: "Courses",     icon: BookOpen },
+  { key: "rentable",    label: "Rentable",    icon: RefreshCw },
+  { key: "purchasable", label: "Purchasable", icon: Package },
+];
+
+/* ── Skeleton Card ── */
+function SkeletonCard() {
+  return (
+    <div className="rounded-2xl border border-pink-900/20 bg-[#1a0510]/50 overflow-hidden animate-pulse">
+      <div className="w-full h-48 bg-pink-900/20" />
+      <div className="p-5 space-y-3">
+        <div className="h-4 w-3/4 bg-pink-900/20 rounded" />
+        <div className="h-3 w-full bg-pink-900/10 rounded" />
+        <div className="h-3 w-2/3 bg-pink-900/10 rounded" />
+        <div className="h-8 w-full bg-pink-900/20 rounded-lg mt-4" />
+      </div>
+    </div>
+  );
+}
+
+/* ── Product Card ── */
+function Card({ item, activeTab, index }) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const { addToCart } = useCart();
+  const hasImage = Boolean(item.image_url);
+
+  useEffect(() => {
+    if (hasImage && activeTab === "rentable") {
+      const img = new window.Image();
+      img.src = item.image_url;
+      img.onload = () => setImageLoaded(true);
+      img.onerror = () => setImageLoaded(true);
+    } else if (hasImage) {
+      const timer = setTimeout(() => setImageLoaded(true), 200);
+      return () => clearTimeout(timer);
+    } else {
+      setImageLoaded(true);
+    }
+  }, [item.image_url, activeTab, hasImage]);
+
+  const price =
+    activeTab === "courses"
+      ? item.price_in_rupees
+      : activeTab === "rentable"
+      ? item.rent
+      : item.price;
+
+  const handleAddToCart = () => {
+    const newItem = {
+      id: item.id || item._id || Math.random().toString(36).substr(2, 9),
+      name: item.name || item.product_name,
+      price,
+      image: hasImage ? item.image_url : null,
+      type: activeTab,
+    };
+    addToCart(newItem);
+    toast.success(`${newItem.name} added to cart!`);
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.45, delay: (index % 6) * 0.07, ease: [0.22, 1, 0.36, 1] }}
+      className="group relative flex flex-col rounded-2xl border border-pink-900/20 bg-[#1a0510]/60
+        hover:border-pink-600/40 hover:shadow-xl hover:shadow-pink-950/50
+        overflow-hidden transition-all duration-500"
+    >
+      {/* Hover glow */}
+      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none bg-gradient-to-br from-pink-600/5 to-transparent" />
+
+      {/* Image */}
+      {hasImage && (
+        <div className="overflow-hidden h-48 flex-shrink-0">
+          {!imageLoaded ? (
+            <div className="w-full h-full bg-pink-900/20 animate-pulse" />
+          ) : (
+            <img
+              src={item.image_url}
+              alt={item.product_name || item.name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              loading="lazy"
+            />
+          )}
+        </div>
+      )}
+
+      {/* Tab badge */}
+      <div className="absolute top-3 left-3">
+        <span className="text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded-full border border-pink-700/40 bg-[#0d0208]/80 text-pink-400 backdrop-blur-sm">
+          {activeTab}
+        </span>
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-col flex-1 p-5">
+        <h3 className="text-base font-bold text-white mb-2 group-hover:text-pink-100 transition-colors line-clamp-2">
+          {item.product_name || item.name}
+        </h3>
+        <p className="text-white/40 text-sm leading-relaxed line-clamp-3 flex-grow mb-4">
+          {item.description}
+        </p>
+
+        <div className="flex items-center justify-between mt-auto pt-3 border-t border-pink-900/20">
+          <span className="text-lg font-extrabold bg-gradient-to-r from-pink-400 to-rose-300 bg-clip-text text-transparent">
+            ₹{price}
+          </span>
+          <button
+            onClick={handleAddToCart}
+            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white
+              bg-gradient-to-r from-pink-600 to-rose-500 hover:from-pink-500 hover:to-rose-400
+              shadow-md shadow-pink-900/30 hover:shadow-pink-700/40
+              transition-all duration-300 hover:scale-105"
+          >
+            <ShoppingCart className="w-3.5 h-3.5" />
+            Add to Cart
+          </button>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/* ── Main Page ── */
 function Marketplace() {
   const [activeTab, setActiveTab] = useState("courses");
   const [items, setItems] = useState([]);
@@ -22,17 +150,11 @@ function Marketplace() {
         } else if (activeTab === "courses") {
           url = "https://stririsebackend.onrender.com/api/courses";
         }
-
         const res = await fetch(url);
         const data = await res.json();
-
-        if (activeTab === "rentable") {
-          setItems(data.rentable_items || []);
-        } else if (activeTab === "purchasable") {
-          setItems(data.purchasable_items || []);
-        } else if (activeTab === "courses") {
-          setItems(data.courses || []);
-        }
+        if (activeTab === "rentable") setItems(data.rentable_items || []);
+        else if (activeTab === "purchasable") setItems(data.purchasable_items || []);
+        else if (activeTab === "courses") setItems(data.courses || []);
       } catch (err) {
         console.error("Error fetching marketplace items:", err);
         setItems([]);
@@ -40,170 +162,113 @@ function Marketplace() {
         setLoading(false);
       }
     };
-
     fetchItems();
   }, [activeTab]);
 
   return (
     <RequireAuth>
-      <div className="min-h-screen flex flex-col bg-transparent">
+      <div className="min-h-screen flex flex-col bg-[#0d0208]">
         <NavBar />
 
-        {/* Hero Section */}
-        <section className="relative w-full h-[20vh] flex items-center justify-center">
-          <div className="absolute inset-0"></div>
-          <div className="flex flex-col">
-          <div className="flex items-center justify-center gap-3 mt-6 ">
-  <div className="h-[2px] md:w-20 bg-pink-300 px-auto"></div>
-  <span className="text-3xl font-bold text-pink-600 tracking-wide text-center">
-     The Women’s Business Launchpad
-  </span>
-  <div className="h-[2px] md:w-20 bg-pink-300"></div>
-</div>
-<p
-              className="text-pink-800 mb-6 text-md text-center"
-              
-            >
-              A dedicated marketplace providing courses and resources designed for women ready to launch their entrepreneurial journey.
-            </p>
+        {/* Hero */}
+        <section className="relative pt-28 pb-16 px-6 text-center overflow-hidden">
+          {/* Ambient */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-48 bg-pink-700/10 blur-3xl pointer-events-none" />
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-pink-500/30 bg-pink-500/10 text-pink-300 text-sm font-medium tracking-wide mb-5">
+              <span className="w-1.5 h-1.5 rounded-full bg-pink-400 animate-pulse" />
+              Curated for Women Entrepreneurs
             </div>
+            <h1 className="text-3xl md:text-5xl font-extrabold text-white leading-tight mb-4">
+              The Women's Business{" "}
+              <span className="bg-gradient-to-r from-pink-400 to-rose-300 bg-clip-text text-transparent">
+                Launchpad
+              </span>
+            </h1>
+            <p className="text-white/45 text-base max-w-xl mx-auto">
+              Courses, tools, and resources designed for women ready to launch their entrepreneurial journey.
+            </p>
+          </motion.div>
         </section>
 
         {/* Tab Switcher */}
-        <div className="flex sm:flex-row flex-col justify-center mt-10 gap-4 mx-20 sm:mx-auto max-w-7xl">
-          {["courses", "rentable", "purchasable"].map((tab) => {
-            const tabLabels = {
-              courses: "Courses",
-              rentable: "Rentable",
-              purchasable: "Purchasable",
-            };
-            const isActive = activeTab === tab;
-            return (
-              <button
-                key={tab}
-                onClick={() => setActiveTab(tab)}
-                className={`w-full px-20 max-w-xl sm:w-1/2 py-3 rounded-full text-lg font-semibold transition-all duration-300 
-                  ${
-                    isActive
-                      ? "bg-pink-600 text-white shadow-lg"
-                      : "bg-white text-pink-700 border border-pink-300 hover:bg-pink-100"
-                  }`}
-                style={{
-                  boxShadow: isActive ? "0 8px 15px rgba(219,39,119,0.4)" : "none",
-                }}
-              >
-                {tabLabels[tab]}
-              </button>
-            );
-          })}
+        <div className="flex justify-center px-6 mb-10">
+          <div className="flex gap-1 p-1 rounded-xl border border-pink-900/30 bg-[#1a0510]/60 backdrop-blur-sm">
+            {TABS.map(({ key, label, icon: Icon }) => {
+              const active = activeTab === key;
+              return (
+                <button
+                  key={key}
+                  onClick={() => setActiveTab(key)}
+                  className={`relative flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-semibold transition-all duration-300
+                    ${active ? "text-white" : "text-white/40 hover:text-white/70"}`}
+                >
+                  {active && (
+                    <motion.div
+                      layoutId="tab-pill"
+                      className="absolute inset-0 rounded-lg bg-gradient-to-r from-pink-600 to-rose-500 shadow-md shadow-pink-900/40"
+                      transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
+                    />
+                  )}
+                  <span className="relative flex items-center gap-2">
+                    <Icon className="w-3.5 h-3.5" />
+                    {label}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        {/* Items Grid */}
-        <section
-          className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 transition-opacity duration-500 ease-in-out"
-          style={{ opacity: loading ? 0.5 : 1 }}
-        >
-          {loading ? (
-            <p className="text-center text-gray-600 w-full col-span-full">
-              Loading {activeTab} items...
-            </p>
-          ) : items.length === 0 ? (
-            <p className="text-center text-gray-600 w-full col-span-full">
-              No {activeTab} items found.
-            </p>
-          ) : (
-            items.map((item, index) => (
-              <Card item={item} key={index} activeTab={activeTab} />
-            ))
-          )}
+        {/* Grid */}
+        <section className="max-w-7xl mx-auto px-6 pb-20 w-full">
+          <AnimatePresence mode="wait">
+            {loading ? (
+              <motion.div
+                key="skeleton"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
+                {Array.from({ length: 6 }).map((_, i) => <SkeletonCard key={i} />)}
+              </motion.div>
+            ) : items.length === 0 ? (
+              <motion.div
+                key="empty"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="flex flex-col items-center justify-center py-24 text-white/25"
+              >
+                <Package className="w-12 h-12 mb-4 opacity-30" />
+                <p className="text-base">No {activeTab} items found.</p>
+              </motion.div>
+            ) : (
+              <motion.div
+                key={activeTab}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+              >
+                {items.map((item, index) => (
+                  <Card item={item} key={index} activeTab={activeTab} index={index} />
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </section>
 
         <Footer />
       </div>
     </RequireAuth>
-  );
-}
-function Card({ item, activeTab }) {
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const { addToCart } = useCart();
-
-  const hasImage = Boolean(item.image_url);
-
-  // Preload images asynchronously (for smooth UI)
-  useEffect(() => {
-    if (hasImage && activeTab === "rentable") {
-      const img = new Image();
-      img.src = item.image_url;
-      img.onload = () => setImageLoaded(true);
-      img.onerror = () => setImageLoaded(true);
-    } else if (hasImage) {
-      const timer = setTimeout(() => setImageLoaded(true), 200);
-      return () => clearTimeout(timer);
-    } else {
-      // No image — instantly mark as loaded
-      setImageLoaded(true);
-    }
-  }, [item.image_url, activeTab, hasImage]);
-
-  const handleAddToCart = () => {
-    const newItem = {
-      id: item.id || item._id || Math.random().toString(36).substr(2, 9),
-      name: item.name || item.product_name,
-      price:
-        activeTab === "courses"
-          ? item.price_in_rupees
-          : activeTab === "rentable"
-          ? item.rent
-          : item.price,
-      image: hasImage ? item.image_url : null,
-      type: activeTab,
-    };
-    addToCart(newItem);
-    toast.success(`${newItem.name} added to cart!`);
-  };
-
-  return (
-    <div className="bg-white rounded-2xl shadow-md hover:shadow-xl transition transform hover:-translate-y-2 overflow-hidden p-6 flex flex-col h-full">
-      {/* Only render image section if an image exists */}
-      {hasImage && (
-        !imageLoaded ? (
-          <div className="w-full h-56 bg-gray-200 mb-4 animate-pulse rounded-lg" />
-        ) : (
-          <img
-            src={item.image_url}
-            alt={item.product_name || item.name}
-            className="w-full h-56 object-cover mb-4 rounded-lg"
-            loading="lazy"
-          />
-        )
-      )}
-
-      <div className="flex-1 flex flex-col">
-        <h3 className="text-xl font-bold text-pink-700 mb-2">
-          {item.product_name || item.name}
-        </h3>
-
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3 flex-grow">
-          {item.description}
-        </p>
-
-        <p className="text-lg font-semibold text-pink-600 mb-4">
-          ₹
-          {activeTab === "courses"
-            ? item.price_in_rupees
-            : activeTab === "rentable"
-            ? item.rent
-            : item.price}
-        </p>
-
-        <button
-          onClick={handleAddToCart}
-          className="mt-auto w-full bg-pink-600 text-white py-2 rounded-full font-semibold hover:bg-pink-700 transition"
-        >
-          Add to Cart
-        </button>
-      </div>
-    </div>
   );
 }
 

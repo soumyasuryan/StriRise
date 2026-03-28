@@ -5,12 +5,13 @@ import { Lock, Mail } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/navbar3";
 import Footer from "../components/footer";
+import { motion } from "framer-motion";
 
 export default function LoginPage() {
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState({ type: "", text: "" }); // ✅ feedback message state
+  const [message, setMessage] = useState({ type: "", text: "" });
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -26,21 +27,17 @@ export default function LoginPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
-        credentials: "include", // ✅ enables session cookie
+        credentials: "include",
       });
 
       const data = await res.json();
-      console.log("Login response:", data);
-
-
 
       if (res.ok) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("userLoggedIn", "true");
         setMessage({ type: "success", text: "Login successful!!!" });
         setTimeout(() => router.push("/"), 1500);
-      }
-      else {
+      } else {
         setMessage({
           type: "error",
           text: `⚠️ ${data.error || "Invalid credentials, please try again!"}`,
@@ -48,85 +45,107 @@ export default function LoginPage() {
       }
     } catch (error) {
       console.error("Login error:", error);
-      setMessage({ type: "error", text: "Something went wrong. Please try again later." });
+      setMessage({
+        type: "error",
+        text: "Something went wrong. Please try again later.",
+      });
     } finally {
       setLoading(false);
     }
   };
-  
 
   return (
-    <div className="flex items-center flex-col min-h-screen bg-transparent">
+    <div className="min-h-screen flex flex-col bg-[#0d0208]">
       <Navbar />
-      <div className="bg-white/90 backdrop-blur-md p-8 rounded-3xl shadow-lg w-full max-w-md border border-pink-100 hover:shadow-pink-300 transition-all duration-300 my-20">
-        <h2 className="text-3xl font-bold text-center text-pink-700 mb-2">Welcome Back</h2>
-        <p className="text-center text-gray-500 mb-6">Log in to continue your journey ✨</p>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Email */}
-          <div>
-            <label className="block text-pink-700 font-medium mb-1">Email Address</label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-3 text-pink-500 w-5 h-5" />
-              <input
-                type="email"
-                name="email"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={handleChange}
-                className="w-full p-3 pl-10 border border-pink-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400 text-gray-700 placeholder-gray-400"
-                required
-              />
-            </div>
-          </div>
-
-          {/* Password */}
-          <div>
-            <label className="block text-pink-700 font-medium mb-1">Password</label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-3 text-pink-500 w-5 h-5" />
-              <input
-                type="password"
-                name="password"
-                placeholder="••••••••"
-                value={form.password}
-                onChange={handleChange}
-                className="w-full p-3 pl-10 border border-pink-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-pink-400 text-gray-700 placeholder-gray-400"
-                required
-              />
-            </div>
-          </div>
-
-          {/* ✅ Inline message display */}
-          {message.text && (
-            <p
-              className={`text-center font-medium ${message.type === "success" ? "text-green-600" : "text-red-600"
-                }`}
-            >
-              {message.text}
+      <main className="flex-grow flex items-center justify-center px-4 sm:px-6 py-12">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-xs sm:max-w-sm rounded-xl border border-pink-900/20 bg-[#1a0510]/70 p-4 sm:p-5 md:p-6"
+        >
+          {/* Header */}
+          <div className="mb-5 text-center">
+            <h2 className="text-lg sm:text-xl md:text-2xl font-extrabold text-white">
+              Welcome{" "}
+              <span className="bg-gradient-to-r from-pink-400 to-rose-300 bg-clip-text text-transparent">
+                Back
+              </span>
+            </h2>
+            <p className="text-xs sm:text-sm text-white/40 mt-1.5">
+              Log in to continue your journey ✨
             </p>
-          )}
+          </div>
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            disabled={loading}
-            className={`w-full py-3 mt-2 ${loading ? "bg-pink-400" : "bg-pink-600 hover:bg-pink-700"
-              } text-white rounded-xl font-semibold shadow-md hover:shadow-pink-300 transition-all duration-300`}
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
-        </form>
+          <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+            {/* Email */}
+          <div className="relative">
+  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 w-4 h-4" />
+  <input
+    type="email"
+    name="email"
+    placeholder="Email"
+    value={form.email}
+    onChange={handleChange}
+    className="w-full bg-[#0d0208] border border-pink-900/30 rounded-xl px-4 py-2.5 pl-12 text-sm text-white placeholder-white/40 focus:outline-none focus:border-pink-500 transition"
+    required
+  />
+</div>
+            {/* Password */}
+           <div className="relative">
+  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-white/40 w-4 h-4" />
+  <input
+    type="password"
+    name="password"
+    placeholder="Password"
+    value={form.password}
+    onChange={handleChange}
+    className="w-full bg-[#0d0208] border border-pink-900/30 rounded-xl px-4 py-2.5 pl-12 text-sm text-white placeholder-white/40 focus:outline-none focus:border-pink-500 transition"
+    required
+  />
+</div>
 
-        <div className="text-center mt-5">
-          <p className="text-sm text-gray-600">
-            Don’t have an account?{" "}
-            <Link href="/signup" className="text-pink-600 font-semibold hover:underline">
-              Sign up
-            </Link>
-          </p>
-        </div>
-      </div>
+            {/* Message */}
+            {message.text && (
+              <p
+                className={`text-center text-xs sm:text-sm ${
+                  message.type === "success"
+                    ? "text-green-400"
+                    : "text-rose-400"
+                }`}
+              >
+                {message.text}
+              </p>
+            )}
+
+            {/* Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2 sm:py-2.5 rounded-xl text-sm font-semibold text-white
+                bg-gradient-to-r from-pink-600 to-rose-500
+                hover:from-pink-500 hover:to-rose-400
+                shadow-md shadow-pink-900/30 hover:shadow-pink-700/40
+                transition-all duration-300 hover:scale-[1.02] disabled:opacity-60"
+            >
+              {loading ? "Logging in..." : "Login"}
+            </button>
+          </form>
+
+          <div className="text-center mt-5">
+            <p className="text-xs sm:text-sm text-white/40">
+              Don’t have an account?{" "}
+              <Link
+                href="/signup"
+                className="bg-gradient-to-r from-pink-400 to-rose-300 bg-clip-text text-transparent font-semibold hover:opacity-80"
+              >
+                Sign up
+              </Link>
+            </p>
+          </div>
+        </motion.div>
+      </main>
+
       <Footer />
     </div>
   );

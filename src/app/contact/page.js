@@ -2,6 +2,7 @@
 import { useState } from "react";
 import NavBar from "../components/navbar";
 import Footer from "../components/footer";
+import { motion } from "framer-motion";
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -22,7 +23,6 @@ export default function ContactPage() {
     setStatus("Sending...");
 
     try {
-      // You can later connect this with your Flask backend
       const res = await fetch("http://127.0.0.1:5000/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -42,122 +42,122 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-transparent">
+    <div className="min-h-screen flex flex-col bg-[#0d0208]">
       <NavBar />
 
-      {/* Hero Section */}
-      <section className="relative w-full h-[20vh] flex items-center justify-center">
-        
-        <div className="absolute inset-0 "></div>
-        <h1 className="relative text-5xl font-extrabold text-pink-700 drop-shadow-lg">
-          Contact Us
-        </h1>
-      </section>
+      <main className="flex-grow max-w-6xl mx-auto w-full px-6 py-16">
 
-      {/* Contact Section */}
-      <section className="flex flex-col md:flex-row justify-center items-start max-w-6xl mx-auto px-6 py-16 gap-12">
-        {/* Left - Contact Info */}
-        <div className="md:w-1/2 space-y-6">
-          <h2 className="text-3xl font-bold text-pink-700 mb-4">Get in Touch 💬</h2>
-          <p className="text-gray-700 leading-relaxed">
-            We'd love to hear from you! Whether you have a question about our initiatives,
-            need support, or just want to say hi — feel free to reach out.
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-12"
+        >
+          <h1 className="text-4xl md:text-5xl font-extrabold text-white">
+            Get in{' '}
+            <span className="bg-gradient-to-r from-pink-400 to-rose-300 bg-clip-text text-transparent">
+              Touch
+            </span>
+          </h1>
+          <p className="text-white/40 mt-3 max-w-xl">
+            We'd love to hear from you — questions, feedback, or just a hello.
           </p>
+        </motion.div>
 
-          <div className="space-y-3 text-gray-700 mt-6">
-            <p>
-              📍 <span className="font-semibold text-pink-700">Address:</span>  
-              123 Empowerment Lane, New Delhi, India
-            </p>
-            <p>
-              📞 <span className="font-semibold text-pink-700">Phone:</span>  
-              +91 98765 43210
-            </p>
-            <p>
-              📧 <span className="font-semibold text-pink-700">Email:</span>  
-              support@stririse.com
-            </p>
-          </div>
+        <div className="flex flex-col lg:flex-row gap-10">
 
-          <div className="flex space-x-4 mt-6">
-            <a
-              href="https://www.instagram.com/"
-              target="_blank"
-              className="text-pink-700 hover:text-pink-900 text-2xl transition"
-            >
-              🌸
-            </a>
-            <a
-              href="https://www.linkedin.com/"
-              target="_blank"
-              className="text-pink-700 hover:text-pink-900 text-2xl transition"
-            >
-              💼
-            </a>
-            <a
-              href="https://twitter.com/"
-              target="_blank"
-              className="text-pink-700 hover:text-pink-900 text-2xl transition"
-            >
-              🐦
-            </a>
-          </div>
-        </div>
+          {/* Left Info */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex-1 space-y-6"
+          >
+            <div className="rounded-2xl border border-pink-900/25 bg-[#1a0510]/60 p-6">
+              <h2 className="text-xl font-bold text-white mb-4">Contact Info</h2>
 
-        {/* Right - Contact Form */}
-        <div className="md:w-1/2 bg-white rounded-2xl shadow-lg p-8 border border-pink-200">
-          <h3 className="text-2xl font-semibold text-pink-700 mb-6">Send Us a Message</h3>
+              <div className="space-y-3 text-white/60 text-sm">
+                <p>📍 New Delhi, India</p>
+                <p>📞 +91 98765 43210</p>
+                <p>📧 support@stririse.com</p>
+              </div>
+            </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4 p-10">
-            <div>
-              <label className="block text-pink-700 font-medium mb-2">Your Name</label>
+            <div className="rounded-2xl border border-pink-900/25 bg-[#1a0510]/60 p-6">
+              <h2 className="text-xl font-bold text-white mb-4">Follow Us</h2>
+
+              <div className="flex gap-4 text-xl">
+                <span className="text-white/40 hover:text-pink-400 transition">🌸</span>
+                <span className="text-white/40 hover:text-pink-400 transition">💼</span>
+                <span className="text-white/40 hover:text-pink-400 transition">🐦</span>
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Form */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="flex-1 rounded-2xl border border-pink-900/25 bg-[#1a0510]/70 p-8"
+          >
+            <h2 className="text-2xl font-bold text-white mb-6">
+              Send a Message
+            </h2>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+
+              {/* Input */}
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                placeholder="Your Name"
                 required
-                className="w-full border border-pink-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="w-full bg-[#0d0208] border border-pink-900/30 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-pink-500 transition"
               />
-            </div>
 
-            <div>
-              <label className="block text-pink-700 font-medium mb-2">Your Email</label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                placeholder="Your Email"
                 required
-                className="w-full border border-pink-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400"
+                className="w-full bg-[#0d0208] border border-pink-900/30 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-pink-500 transition"
               />
-            </div>
 
-            <div>
-              <label className="block text-pink-700 font-medium mb-2">Your Message</label>
               <textarea
                 name="message"
                 value={formData.message}
                 onChange={handleChange}
-                required
+                placeholder="Your Message"
                 rows="5"
-                className="w-full border border-pink-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-400"
-              ></textarea>
-            </div>
+                required
+                className="w-full bg-[#0d0208] border border-pink-900/30 rounded-xl px-4 py-3 text-white placeholder-white/30 focus:outline-none focus:border-pink-500 transition"
+              />
 
-            <button
-              type="submit"
-              className="w-full bg-pink-600 text-white py-2 rounded-full font-semibold hover:bg-pink-700 transition"
-            >
-              Send Message
-            </button>
+              {/* Button */}
+              <button
+                type="submit"
+                className="w-full py-3 rounded-xl text-sm font-semibold text-white
+                  bg-gradient-to-r from-pink-600 to-rose-500
+                  hover:from-pink-500 hover:to-rose-400
+                  shadow-md shadow-pink-900/30 hover:shadow-pink-700/40
+                  transition-all duration-300 hover:scale-[1.02]"
+              >
+                Send Message
+              </button>
 
-            {status && (
-              <p className="text-center text-sm text-pink-700 mt-3">{status}</p>
-            )}
-          </form>
+              {status && (
+                <p className="text-center text-sm text-white/40 mt-3">
+                  {status}
+                </p>
+              )}
+            </form>
+          </motion.div>
         </div>
-      </section>
+      </main>
 
       <Footer />
     </div>
